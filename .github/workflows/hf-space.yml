@@ -16,4 +16,4 @@ jobs:
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
-        git push https://joshuasundance:$HF_TOKEN@huggingface.co/spaces/joshuasundance/langchain-streamlit-demo main
+        git push https://joshuasundance:$HF_TOKEN@huggingface.co/spaces/joshuasundance/govgis_nov2023-slim-faiss main

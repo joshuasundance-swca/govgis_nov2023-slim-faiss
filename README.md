@@ -1,8 +1,8 @@
 ---
 title: Govgis Nov2023-slim-faiss
-emoji: 🐨
-colorFrom: red
-colorTo: gray
+emoji: 🌎
+colorFrom: green
+colorTo: blue
 sdk: streamlit
 sdk_version: 1.28.2
 app_file: app.py

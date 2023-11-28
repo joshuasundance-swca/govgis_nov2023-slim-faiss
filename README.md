@@ -67,4 +67,6 @@ Thanks to the Huggingface and Streamlit communities, and special acknowledgment 
 
 ## TODO
 - [ ] Add an open source model like `HuggingFaceH4/zephyr-7b-beta`
--
+- [ ] Hybrid search w/ bm25 or similar
+- [ ] Find a lightweight way to incorporate geospatial filtering
+- [ ] Add more parameters

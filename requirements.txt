@@ -1,8 +1,8 @@
 anthropic==0.8.1
 faiss-cpu==1.7.4
-huggingface-hub==0.20.1
-langchain==0.0.353
-langsmith==0.0.75
+huggingface-hub==0.20.2
+langchain==0.1.0
+langsmith==0.0.77
 openai==1.6.1
 pydantic==2.5.3
 PyYAML==6.0.1

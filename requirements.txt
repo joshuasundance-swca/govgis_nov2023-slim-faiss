@@ -1,11 +1,11 @@
-anthropic==0.12.0
+anthropic==0.15.0
 faiss-cpu==1.7.4
 huggingface-hub==0.20.3
-langchain==0.1.4
-langsmith==0.0.84
-openai==1.10.0
-pydantic==2.6.0
+langchain==0.1.5
+langsmith==0.0.86
+openai==1.11.1
+pydantic==2.6.1
 PyYAML==6.0.1
-sentence-transformers==2.3.0
-streamlit==1.30.0
-torch==2.1.2 -f https://download.pytorch.org/whl/cpu/torch_stable.html
+sentence-transformers==2.3.1
+streamlit==1.31.0
+torch==2.2.0 -f https://download.pytorch.org/whl/cpu/torch_stable.html

@@ -27,9 +27,11 @@ class SpaceBuildContractTests(unittest.TestCase):
         metadata = _space_metadata()
         requirement_names = [
             line.split("==", maxsplit=1)[0].strip().lower()
-            for line in (REPOSITORY_ROOT / "requirements.txt").read_text(
-                encoding="utf-8"
-            ).splitlines()
+            for line in (REPOSITORY_ROOT / "requirements.txt")
+            .read_text(
+                encoding="utf-8",
+            )
+            .splitlines()
             if line and not line.startswith("#")
         ]
 

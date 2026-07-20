@@ -82,15 +82,25 @@ sequenced after that gate exists) — treat it as planned, not yet done, until S
 - `git rev-parse main` / GitHub `main` / the live Space `sha` were all confirmed identical
   (`5b3cacaf27fc4c75cb4e6e4c3d86dc1796ece5c9`) as of 2026-07-20 — re-verify before assuming this is
   still the baseline; it will drift as work lands.
+- The Space's build/run log endpoints (`GET /api/spaces/<id>/logs/{build,run}`) returned HTTP 401
+  during the adversarial-review baseline check because that check was **unauthenticated**. With the
+  Space owner's own `huggingface_hub` token they return HTTP 200 as an SSE stream — see
+  `docs/stage0/baseline_timings.md` for a real capture. The run-log endpoint only retains logs for
+  the currently running instance (no historical-restart lookback).
 
 ## Modernization plan status (2026-07-20)
 
 Claude Code completed the plan's own "Review mandate for Claude Code": an 8-axis adversarial audit
 (31 confirmed findings, 0 critical, 1 high) is applied directly to `docs/modernization-plan.md` on
-branch `docs/modernization-plan`. Full evidence and methodology: `audit-recommendations/`. Nothing
-has been implemented — this was a plan review, not a code change. Before starting Stage 0, read the
-plan's "Claude Code review — 2026-07-20" section (near the top) and the "Implementation orchestration
-strategy" subsection (under "Staged implementation and gates") for the verdict and execution plan.
+branch `docs/modernization-plan`. Full evidence and methodology: `audit-recommendations/`. Before
+starting Stage 1, read the plan's "Claude Code review — 2026-07-20" section (near the top) and the
+"Implementation orchestration strategy" subsection (under "Staged implementation and gates") for the
+verdict and execution plan.
+
+**Stage 0's Gate has passed** (same day) — query set, baseline timings, the retrieval-quality
+threshold procedure, the rollback tag, and the staging Space ID are all recorded; see the plan's
+"Stage 0 results" subsection and `docs/stage0/`. No modernization *code* exists yet — Stage 0 is
+test-oracle and baseline work, not implementation. Stage 1 is next.
 
 ## Implementation approach: orchestrate Stages 1–4, gate Stages 5–6 manually
 

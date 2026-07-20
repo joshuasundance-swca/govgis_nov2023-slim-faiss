@@ -1,0 +1,29 @@
+{
+  "stage": "RUNNING",
+  "hardware": "cpu-basic",
+  "requested_hardware": "cpu-basic",
+  "sleep_time": 172800,
+  "storage": null,
+  "hot_reloading": null,
+  "volumes": null,
+  "raw": {
+    "stage": "RUNNING",
+    "hardware": {
+      "current": "cpu-basic",
+      "requested": "cpu-basic"
+    },
+    "gcTimeout": 172800,
+    "replicas": {
+      "current": 1,
+      "requested": 1
+    },
+    "devMode": false,
+    "domains": [
+      {
+        "domain": "joshuasundance-govgis-nov2023-slim-faiss.hf.space",
+        "stage": "READY"
+      }
+    ],
+    "sha": "5b3cacaf27fc4c75cb4e6e4c3d86dc1796ece5c9"
+  }
+}

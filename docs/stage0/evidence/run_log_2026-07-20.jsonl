@@ -1,0 +1,378 @@
+data: {"data":"===== Application Startup at 2026-07-20 16:26:09 =====\n","timestamp":"2026-07-20T16:26:09Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:27:18.479Z"}
+
+data: {"data":"Collecting usage statistics. To deactivate, set browser.gatherUsageStats to False.","timestamp":"2026-07-20T16:27:18.480Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:27:18.480Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:27:19.064Z"}
+
+data: {"data":"  You can now view your Streamlit app in your browser.","timestamp":"2026-07-20T16:27:19.064Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:27:19.064Z"}
+
+data: {"data":"  Network URL: http://10.112.121.188:8501","timestamp":"2026-07-20T16:27:19.064Z"}
+
+data: {"data":"  External URL: http://3.228.31.30:8501","timestamp":"2026-07-20T16:27:19.064Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:27:19.064Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/chat_models/__init__.py:31: LangChainDeprecationWarning: Importing chat models from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T16:50:59.114Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:50:59.115Z"}
+
+data: {"data":"`from langchain_community.chat_models import ChatAnthropic`.","timestamp":"2026-07-20T16:50:59.115Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:50:59.115Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T16:50:59.115Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T16:50:59.115Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/embeddings/__init__.py:29: LangChainDeprecationWarning: Importing embeddings from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T16:50:59.263Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:50:59.263Z"}
+
+data: {"data":"`from langchain_community.embeddings import HuggingFaceBgeEmbeddings`.","timestamp":"2026-07-20T16:50:59.263Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:50:59.263Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T16:50:59.263Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T16:50:59.263Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/vectorstores/__init__.py:35: LangChainDeprecationWarning: Importing vector stores from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T16:50:59.366Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:50:59.366Z"}
+
+data: {"data":"`from langchain_community.vectorstores import FAISS`.","timestamp":"2026-07-20T16:50:59.366Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:50:59.366Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T16:50:59.366Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T16:50:59.366Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:50:59.755Z"}
+
+data: {"data":"\r(…)ovgis_nov2023-slim-nospatial.faiss.bytes:   0%|          | 0.00/4.28G [00:00<?, ?B/s]\u001b[A","timestamp":"2026-07-20T16:51:01.143Z"}
+
+data: {"data":"\r(…)ovgis_nov2023-slim-nospatial.faiss.bytes:   1%|▏         | 62.9M/4.28G [00:01<01:33, 45.3MB/s]\u001b[A","timestamp":"2026-07-20T16:51:02.165Z"}
+
+data: {"data":"\r(…)ovgis_nov2023-slim-nospatial.faiss.bytes:  10%|▉         | 409M/4.28G [00:02<00:19, 196MB/s]  \u001b[A","timestamp":"2026-07-20T16:51:03.196Z"}
+
+data: {"data":"\r(…)ovgis_nov2023-slim-nospatial.faiss.bytes:  29%|██▊       | 1.23G/4.28G [00:03<00:06, 450MB/s]\u001b[A","timestamp":"2026-07-20T16:51:04.199Z"}
+
+data: {"data":"\r(…)ovgis_nov2023-slim-nospatial.faiss.bytes:  45%|████▌     | 1.93G/4.28G [00:04<00:04, 543MB/s]\u001b[A","timestamp":"2026-07-20T16:51:05.201Z"}
+
+data: {"data":"\r(…)ovgis_nov2023-slim-nospatial.faiss.bytes:  62%|██████▏   | 2.65G/4.28G [00:05<00:02, 605MB/s]\u001b[A","timestamp":"2026-07-20T16:51:06.267Z"}
+
+data: {"data":"\r(…)ovgis_nov2023-slim-nospatial.faiss.bytes:  77%|███████▋  | 3.28G/4.28G [00:06<00:01, 600MB/s]\u001b[A\r(…)ovgis_nov2023-slim-nospatial.faiss.bytes: 100%|█████████▉| 4.28G/4.28G [00:07<00:00, 563MB/s]","timestamp":"2026-07-20T16:51:07.365Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:51:14.714Z"}
+
+data: {"data":"\rmodules.json:   0%|          | 0.00/349 [00:00<?, ?B/s]\u001b[A\rmodules.json: 100%|██████████| 349/349 [00:00<00:00, 1.79MB/s]","timestamp":"2026-07-20T16:51:14.714Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:51:14.744Z"}
+
+data: {"data":"\rconfig_sentence_transformers.json:   0%|          | 0.00/124 [00:00<?, ?B/s]\u001b[A\rconfig_sentence_transformers.json: 100%|██████████| 124/124 [00:00<00:00, 771kB/s]","timestamp":"2026-07-20T16:51:14.744Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:51:14.776Z"}
+
+data: {"data":"\rREADME.md:   0%|          | 0.00/94.6k [00:00<?, ?B/s]\u001b[A\rREADME.md: 100%|██████████| 94.6k/94.6k [00:00<00:00, 34.9MB/s]","timestamp":"2026-07-20T16:51:14.779Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:51:14.824Z"}
+
+data: {"data":"\rsentence_bert_config.json:   0%|          | 0.00/52.0 [00:00<?, ?B/s]\u001b[A\rsentence_bert_config.json: 100%|██████████| 52.0/52.0 [00:00<00:00, 314kB/s]","timestamp":"2026-07-20T16:51:14.825Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:51:14.851Z"}
+
+data: {"data":"\rconfig.json:   0%|          | 0.00/779 [00:00<?, ?B/s]\u001b[A\rconfig.json: 100%|██████████| 779/779 [00:00<00:00, 4.64MB/s]","timestamp":"2026-07-20T16:51:14.851Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:51:15.255Z"}
+
+data: {"data":"\rmodel.safetensors:   0%|          | 0.00/1.34G [00:00<?, ?B/s]\u001b[A","timestamp":"2026-07-20T16:51:16.713Z"}
+
+data: {"data":"\rmodel.safetensors:   1%|          | 10.5M/1.34G [00:01<03:04, 7.19MB/s]\u001b[A","timestamp":"2026-07-20T16:51:17.718Z"}
+
+data: {"data":"\rmodel.safetensors:  38%|███▊      | 503M/1.34G [00:02<00:03, 247MB/s]  \u001b[A\rmodel.safetensors: 100%|█████████▉| 1.34G/1.34G [00:03<00:00, 378MB/s]","timestamp":"2026-07-20T16:51:18.801Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:51:19.470Z"}
+
+data: {"data":"\rtokenizer_config.json:   0%|          | 0.00/366 [00:00<?, ?B/s]\u001b[A\rtokenizer_config.json: 100%|██████████| 366/366 [00:00<00:00, 2.55MB/s]","timestamp":"2026-07-20T16:51:19.470Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:51:19.500Z"}
+
+data: {"data":"\rvocab.txt:   0%|          | 0.00/232k [00:00<?, ?B/s]\u001b[A\rvocab.txt: 100%|██████████| 232k/232k [00:00<00:00, 154MB/s]","timestamp":"2026-07-20T16:51:19.501Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:51:19.545Z"}
+
+data: {"data":"\rtokenizer.json:   0%|          | 0.00/711k [00:00<?, ?B/s]\u001b[A\rtokenizer.json: 100%|██████████| 711k/711k [00:00<00:00, 50.2MB/s]","timestamp":"2026-07-20T16:51:19.560Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:51:19.596Z"}
+
+data: {"data":"\rspecial_tokens_map.json:   0%|          | 0.00/125 [00:00<?, ?B/s]\u001b[A\rspecial_tokens_map.json: 100%|██████████| 125/125 [00:00<00:00, 808kB/s]","timestamp":"2026-07-20T16:51:19.597Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:51:19.685Z"}
+
+data: {"data":"\rconfig.json:   0%|          | 0.00/191 [00:00<?, ?B/s]\u001b[A\rconfig.json: 100%|██████████| 191/191 [00:00<00:00, 973kB/s]","timestamp":"2026-07-20T16:51:19.685Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/chat_models/__init__.py:31: LangChainDeprecationWarning: Importing chat models from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"`from langchain_community.chat_models import ChatAnthropic`.","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/embeddings/__init__.py:29: LangChainDeprecationWarning: Importing embeddings from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"`from langchain_community.embeddings import HuggingFaceBgeEmbeddings`.","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/vectorstores/__init__.py:35: LangChainDeprecationWarning: Importing vector stores from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"`from langchain_community.vectorstores import FAISS`.","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T16:52:15.525Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/chat_models/__init__.py:31: LangChainDeprecationWarning: Importing chat models from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T16:54:46.525Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:54:46.525Z"}
+
+data: {"data":"`from langchain_community.chat_models import ChatAnthropic`.","timestamp":"2026-07-20T16:54:46.525Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:54:46.525Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T16:54:46.525Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T16:54:46.525Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/embeddings/__init__.py:29: LangChainDeprecationWarning: Importing embeddings from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T16:54:46.525Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:54:46.526Z"}
+
+data: {"data":"`from langchain_community.embeddings import HuggingFaceBgeEmbeddings`.","timestamp":"2026-07-20T16:54:46.526Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:54:46.526Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T16:54:46.526Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T16:54:46.526Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/vectorstores/__init__.py:35: LangChainDeprecationWarning: Importing vector stores from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T16:54:46.526Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:54:46.526Z"}
+
+data: {"data":"`from langchain_community.vectorstores import FAISS`.","timestamp":"2026-07-20T16:54:46.526Z"}
+
+data: {"data":"","timestamp":"2026-07-20T16:54:46.526Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T16:54:46.526Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T16:54:46.526Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/chat_models/__init__.py:31: LangChainDeprecationWarning: Importing chat models from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"`from langchain_community.chat_models import ChatAnthropic`.","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/embeddings/__init__.py:29: LangChainDeprecationWarning: Importing embeddings from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"`from langchain_community.embeddings import HuggingFaceBgeEmbeddings`.","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/vectorstores/__init__.py:35: LangChainDeprecationWarning: Importing vector stores from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T17:02:31.822Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:02:31.823Z"}
+
+data: {"data":"`from langchain_community.vectorstores import FAISS`.","timestamp":"2026-07-20T17:02:31.823Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:02:31.823Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T17:02:31.823Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T17:02:31.823Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/chat_models/__init__.py:31: LangChainDeprecationWarning: Importing chat models from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T17:31:49.325Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:31:49.326Z"}
+
+data: {"data":"`from langchain_community.chat_models import ChatAnthropic`.","timestamp":"2026-07-20T17:31:49.326Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:31:49.326Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T17:31:49.326Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T17:31:49.326Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/embeddings/__init__.py:29: LangChainDeprecationWarning: Importing embeddings from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T17:31:49.326Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:31:49.326Z"}
+
+data: {"data":"`from langchain_community.embeddings import HuggingFaceBgeEmbeddings`.","timestamp":"2026-07-20T17:31:49.326Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:31:49.326Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T17:31:49.326Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T17:31:49.326Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/vectorstores/__init__.py:35: LangChainDeprecationWarning: Importing vector stores from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T17:31:49.327Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:31:49.327Z"}
+
+data: {"data":"`from langchain_community.vectorstores import FAISS`.","timestamp":"2026-07-20T17:31:49.327Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:31:49.327Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T17:31:49.327Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T17:31:49.327Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/chat_models/__init__.py:31: LangChainDeprecationWarning: Importing chat models from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"`from langchain_community.chat_models import ChatAnthropic`.","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/embeddings/__init__.py:29: LangChainDeprecationWarning: Importing embeddings from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"`from langchain_community.embeddings import HuggingFaceBgeEmbeddings`.","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/vectorstores/__init__.py:35: LangChainDeprecationWarning: Importing vector stores from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"`from langchain_community.vectorstores import FAISS`.","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T17:36:54.194Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/chat_models/__init__.py:31: LangChainDeprecationWarning: Importing chat models from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T19:27:50.777Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:27:50.779Z"}
+
+data: {"data":"`from langchain_community.chat_models import ChatAnthropic`.","timestamp":"2026-07-20T19:27:50.779Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:27:50.779Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T19:27:50.779Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T19:27:50.779Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/embeddings/__init__.py:29: LangChainDeprecationWarning: Importing embeddings from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T19:27:50.779Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:27:50.779Z"}
+
+data: {"data":"`from langchain_community.embeddings import HuggingFaceBgeEmbeddings`.","timestamp":"2026-07-20T19:27:50.779Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:27:50.779Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T19:27:50.779Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T19:27:50.779Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/vectorstores/__init__.py:35: LangChainDeprecationWarning: Importing vector stores from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T19:27:50.780Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:27:50.780Z"}
+
+data: {"data":"`from langchain_community.vectorstores import FAISS`.","timestamp":"2026-07-20T19:27:50.780Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:27:50.780Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T19:27:50.780Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T19:27:50.780Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/chat_models/__init__.py:31: LangChainDeprecationWarning: Importing chat models from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T19:28:33.445Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:28:33.445Z"}
+
+data: {"data":"`from langchain_community.chat_models import ChatAnthropic`.","timestamp":"2026-07-20T19:28:33.445Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:28:33.445Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T19:28:33.445Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T19:28:33.445Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/embeddings/__init__.py:29: LangChainDeprecationWarning: Importing embeddings from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T19:28:33.446Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:28:33.446Z"}
+
+data: {"data":"`from langchain_community.embeddings import HuggingFaceBgeEmbeddings`.","timestamp":"2026-07-20T19:28:33.446Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:28:33.446Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T19:28:33.446Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T19:28:33.446Z"}
+
+data: {"data":"/usr/local/lib/python3.11/site-packages/langchain/vectorstores/__init__.py:35: LangChainDeprecationWarning: Importing vector stores from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:","timestamp":"2026-07-20T19:28:33.446Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:28:33.446Z"}
+
+data: {"data":"`from langchain_community.vectorstores import FAISS`.","timestamp":"2026-07-20T19:28:33.446Z"}
+
+data: {"data":"","timestamp":"2026-07-20T19:28:33.446Z"}
+
+data: {"data":"To install langchain-community run `pip install -U langchain-community`.","timestamp":"2026-07-20T19:28:33.446Z"}
+
+data: {"data":"  warnings.warn(","timestamp":"2026-07-20T19:28:33.446Z"}
+
+: keep-alive
+
+: keep-alive
+
+: keep-alive
+

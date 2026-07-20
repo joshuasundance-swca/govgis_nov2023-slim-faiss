@@ -1,0 +1,343 @@
+[
+  {
+    "id": "CLAIM-01",
+    "axis": "CLAIM",
+    "title": "No required PR check exists to attach Stage 6's merge gate to",
+    "severity": "medium",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Reliability and observability gaps' (also Stage 6 'merge only after required checks pass')",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "CLAIM-02",
+    "axis": "CLAIM",
+    "title": "'storage: null' claim doesn't match the live Space API's actual schema",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Reconciled baseline'",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "CLAIM-03",
+    "axis": "CLAIM",
+    "title": "Streamlit-SDK 'deprecated' claim cites a page with no deprecation language; the real evidence is uncited",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Confirmed decisions' (#1) and 'Evidence sources' ('Streamlit SDK deprecation')",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "CLAIM-04",
+    "axis": "CLAIM",
+    "title": "'Recovery implementation commit: 3e85082' is tree-identical to the deployed SHA 5b3caca, not a distinct fallback state",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Reconciled baseline' ('Known-good rollback points')",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "GATES-01",
+    "axis": "GATES",
+    "title": "Stage 2 and Stage 7 gates assume a retrieval-quality threshold the document's own Open Questions section says is still undecided",
+    "severity": "medium",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, sections 'Stage 2: safe artifact conversion and retrieval core' (Gate), 'Stage 7: evaluated footprint reduction' (Gate), and 'Open implementation-time questions'",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "GATES-02",
+    "axis": "GATES",
+    "title": "Stage 4's provider/model-default decision has no corresponding Gate bullet at all",
+    "severity": "medium",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Stage 4: providers and authentication' (Actions vs. Gate)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "GATES-03",
+    "axis": "GATES",
+    "title": "Stage 0 and Stage 7 have no Rollback subsection at all; Stage 3's Rollback is far vaguer than its Gate",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, sections 'Stage 0: baseline and test oracle', 'Stage 3: Gradio and secure presentation' (Rollback), and 'Stage 7: evaluated footprint reduction'",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "GATES-04",
+    "axis": "GATES",
+    "title": "Stage 0's metrics-capture Gate doesn't require the capture mechanism to actually work, despite the plan already knowing the obvious mechanism is blocked",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, sections 'Stage 0: baseline and test oracle' (Actions/Gate), 'Reconciled baseline', and 'Startup and storage strategy'",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "GATES-05",
+    "axis": "GATES",
+    "title": "Stage 5's Gate doesn't enforce its own Action's \"multiple cold builds/restarts\" requirement",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Stage 5: staging deployment' (Actions vs. Gate)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "GATES-06",
+    "axis": "GATES",
+    "title": "The staging-Space-ID recording safeguard has no executable gate anywhere",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, sections 'Confirmed decisions' (#5) and 'Stage 0: baseline and test oracle' (Actions/Gate)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "TECH-CHOICE-01",
+    "axis": "TECH-CHOICE",
+    "title": "uv/pyproject.toml decision has no documented path into the actual Gradio Space build contract \u2014 README YAML front matter is never addressed",
+    "severity": "medium",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, sections 'Confirmed decisions' (items 1 and 6) and 'Stage 1: project foundation'",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "TECH-CHOICE-02",
+    "axis": "TECH-CHOICE",
+    "title": "Target-architecture flow diagram has a pipeline-orchestration step with no owning module, while app.py is explicitly scoped to UI wiring only",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Target architecture'",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "TRUST-BOUNDARY-01",
+    "axis": "TRUST-BOUNDARY",
+    "title": "BYOK 'never enter logs/caches/telemetry/exceptions' policy has no stated verification mechanism",
+    "severity": "high",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, 'Confirmed decisions' item 2, and 'Stage 4: providers and authentication' (Actions/Gate)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "TRUST-BOUNDARY-02",
+    "axis": "TRUST-BOUNDARY",
+    "title": "http/https link-scheme allowlist and 'unsafe links do not execute' gate are never re-verified against LLM-generated answer text",
+    "severity": "medium",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, sections 'Unsafe rendering', 'Prompt injection', 'Stage 3: Gradio and secure presentation' (Gate), 'Stage 4: providers and authentication' (Gate)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "TRUST-BOUNDARY-03",
+    "axis": "TRUST-BOUNDARY",
+    "title": "Timeout/retry/concurrency mitigations are stated with no numbers and no executable gate",
+    "severity": "medium",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Secrets, cost, and public abuse' and 'Stage 4: providers and authentication' (Gate)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "TRUST-BOUNDARY-04",
+    "axis": "TRUST-BOUNDARY",
+    "title": "Rollback silently reopens the two other named critical trust-boundary risks",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Known-good rollback points' and Stage 2/6 'Rollback' subsections",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "TRUST-BOUNDARY-05",
+    "axis": "TRUST-BOUNDARY",
+    "title": "No gate verifies the FAISS conversion actually ran isolated/no-network",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Critical trust boundary: serialized FAISS data' and 'Stage 2: safe artifact conversion and retrieval core' (Gate)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "TRUST-BOUNDARY-06",
+    "axis": "TRUST-BOUNDARY",
+    "title": "'Do not use gr.HTML for untrusted content' has only a one-time browser test, no durable regression gate",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Unsafe rendering' (Target policy) and 'Stage 3: Gradio and secure presentation' (Gate)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "ARCHITECTURE-01",
+    "axis": "ARCHITECTURE",
+    "title": "\"Safe presentation model\" is a named pipeline stage but no module owns its type, risking silent reintroduction of the current XSS bug's root cause",
+    "severity": "medium",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Target architecture'",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "RELIABILITY-CICD-01",
+    "axis": "RELIABILITY-CICD",
+    "title": "Stage 6's \"merge only after required checks pass\" has nothing to attach to \u2014 no branch protection exists and Stage 1 never commits to creating it",
+    "severity": "medium",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section \"Stage 6: production rollout\" (Actions) and section \"Current risks\" > \"Reliability and observability gaps\"",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "RELIABILITY-CICD-02",
+    "axis": "RELIABILITY-CICD",
+    "title": "bumpver.yml pushes directly to main, bypassing any PR-gated required-check mechanism the plan will add \u2014 never mentioned in the document",
+    "severity": "medium",
+    "effort": "S",
+    "location": "no attachment point in docs/modernization-plan.md today; nearest is \"Confirmed decisions\" #7 (\"Keep production working until a modernized branch passes all local, CI, staging, and live observable gates.\") and \"Stage 6: production rollout\"",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "RELIABILITY-CICD-03",
+    "axis": "RELIABILITY-CICD",
+    "title": "No GitHub Actions workflow currently runs any test tier \u2014 Stage 1's \"update GitHub Actions to invoke the complete gate\" needs to say \"create\", not \"update\"",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section \"Stage 1: project foundation\" (Actions and Gate)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "RELIABILITY-CICD-04",
+    "axis": "RELIABILITY-CICD",
+    "title": "hf-space.yml's diagnosed false-positive-success defect is never assigned a concrete fix file or mechanism in any stage",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, \"Current risks\" > \"Reliability and observability gaps\" vs. \"Stage 5: staging deployment\" and \"Stage 6: production rollout\" (Actions)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "RELIABILITY-CICD-05",
+    "axis": "RELIABILITY-CICD",
+    "title": "Stage 1 modernizes to uv/pyproject but never updates dependabot.yml, which still targets pip/requirements.txt",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md \u2014 decision #8 (line 49) and Stage 1 tooling actions (lines 288-293); .github/dependabot.yml",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "ROLLBACK-OBS-01",
+    "axis": "ROLLBACK-OBS",
+    "title": "No stage's Rollback subsection contains an executable command; the actual redeploy mechanism (direct git push to the HF Space remote) is never named or disambiguated",
+    "severity": "medium",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Stage 6: production rollout' (Rollback) and 'Stage 5: staging deployment' (Rollback)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "ROLLBACK-OBS-02",
+    "axis": "ROLLBACK-OBS",
+    "title": "'Verify its SHA' / 'staging reports the intended SHA' are stated as prose gates with no captured command, despite the exact working command already being used to reconcile this document's own baseline",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Stage 5: staging deployment' (Actions, Gate)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "ROLLBACK-OBS-03",
+    "axis": "ROLLBACK-OBS",
+    "title": "Stage 6's regression gate ('no new security, latency, memory, or provider regression is observed') never references the Stage 0 baseline it needs a comparison basis from",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section 'Stage 6: production rollout' (Gate) vs. section 'Stage 0: baseline and test oracle' (Actions)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "SELF-REF-DOCS-01",
+    "axis": "SELF-REF-DOCS",
+    "title": "Stage 6's \"merge only after required checks pass\" gate has no corresponding action anywhere in the plan to actually create required checks",
+    "severity": "medium",
+    "effort": "S",
+    "location": "docs/modernization-plan.md, section \"Stage 6: production rollout\" (cross-referenced with section \"Current risks\" / \"Reliability and observability gaps\")",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "SELF-REF-DOCS-02",
+    "axis": "SELF-REF-DOCS",
+    "title": "The 2026-07-20 baseline snapshot is treated as durable but has no re-reconciliation gate at Stage 0 kickoff, though main is not frozen",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md \u2014 'Reconciled baseline / Verified on 2026-07-20' (lines 52-66), rollback pins to 5b3caca (lines 68-75, 390, 411-413); Stage 0 (lines 267-282)",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "CROSS-01",
+    "axis": "cross-cutting",
+    "title": "Target README/UI attribution and MIT-license preservation are never addressed; a rewrite risks silently dropping required notices",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md \u2014 absent throughout (grep for licen|elfelt|restgdf|attribut|acknowledg returns nothing on-topic); README.md acknowledgments (line 66) + license link (line 62); LICENSE file",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  },
+  {
+    "id": "CROSS-02",
+    "axis": "cross-cutting",
+    "title": "Plan names no review/approval authority for stage transitions or merges \u2014 an undefined control on an apparently single-maintainer public service",
+    "severity": "low",
+    "effort": "S",
+    "location": "docs/modernization-plan.md \u2014 staged section (lines 265-429), esp. Stage 6 'merge only after required checks pass' (line 396); Stage 5\u21926 transition",
+    "files": [
+      "docs/modernization-plan.md"
+    ]
+  }
+]

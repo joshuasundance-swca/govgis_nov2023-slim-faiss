@@ -70,6 +70,20 @@ jobs:
       - name: Run pre-commit on all files
         run: uv run pre-commit run --all-files
 
+  gr-html-safety:
+    name: gr-html-safety
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v8.3.2
+        with:
+          python-version: "3.14"
+          enable-cache: true
+      - name: Install project (locked)
+        run: uv sync --locked --all-groups
+      - name: Check gr.HTML is never bound to non-literal content
+        run: uv run python scripts/check_gr_html_safety.py
+
   requirements-drift:
     name: requirements-drift
     runs-on: ubuntu-latest

@@ -54,6 +54,17 @@ repos:
         types_or: [python, pyi]
         pass_filenames: false
         require_serial: true
+      # Same rationale/pattern as the mypy hook above: scans the whole repo
+      # (govgis/ and app.py) rather than only changed files, since this is a
+      # durable safety gate (docs/modernization-plan.md Stage 3), not a
+      # style check -- a partial pre-commit filename list must not create a
+      # blind spot for this rule the way it would for mypy's exclude config.
+      - id: gr-html-safety
+        name: gr.HTML safety check (no dataset/user/model content)
+        entry: uv run --no-sync python scripts/check_gr_html_safety.py
+        language: system
+        types_or: [python]
+        pass_filenames: false
   - repo: https://github.com/PyCQA/bandit
     rev: "1.9.4"
     hooks:

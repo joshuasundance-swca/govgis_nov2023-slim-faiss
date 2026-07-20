@@ -1,245 +1,228 @@
-import os
-from operator import itemgetter
-from typing import Optional
+"""Gradio Blocks composition and event wiring for the govgis semantic-search Space.
 
-import streamlit as st
-import yaml
-from huggingface_hub import hf_hub_download
-from langchain.chat_models import ChatAnthropic
-from langchain.embeddings import HuggingFaceBgeEmbeddings
-from langchain.prompts import ChatPromptTemplate, PromptTemplate
-from langchain.schema.document import Document
-from langchain.schema.output_parser import StrOutputParser
-from langchain.vectorstores import FAISS
-
-DEFAULT_TEMPERATURE = 0.5
-DEFAULT_MAX_TOKENS = 512
-DEFAULT_SEARCH_RESULT_LIMIT = 3
-default_hf_home = os.path.join(os.path.expanduser("~"), ".cache", "huggingface")
-HF_HOME = os.environ.get("HF_HOME", default_hf_home)
-
-if "chain" not in st.session_state:
-    st.session_state.chain = None
-
-with st.sidebar:
-    st.session_state.search_result_limit = st.slider(
-        "Search Result Limit",
-        min_value=1,
-        max_value=10,
-        value=DEFAULT_SEARCH_RESULT_LIMIT,
-        step=1,
-    )
-
-    st.session_state.anthropic_api_key = st.text_input(
-        "Anthropic API Key",
-        type="password",
-    )
-
-    st.session_state.temperature = st.slider(
-        "Temperature",
-        min_value=0.0,
-        max_value=1.0,
-        value=DEFAULT_TEMPERATURE,
-        step=0.05,
-    )
-
-    st.session_state.max_tokens = st.slider(
-        "Max Tokens",
-        min_value=512,
-        max_value=12800,
-        value=DEFAULT_MAX_TOKENS,
-        step=256,
-    )
-
-    st.session_state.use_instant_for_rephrase = st.checkbox(
-        "Use `claude-instant-v1` to generate search query",
-        value=True,
-    )
-
-
-@st.cache_resource
-def get_embedding_model(device: str = "cpu", **kwargs) -> HuggingFaceBgeEmbeddings:
-    model_name = "BAAI/bge-large-en-v1.5"
-    model_kwargs = {"device": device}
-    encode_kwargs = {"normalize_embeddings": True}
-    return HuggingFaceBgeEmbeddings(
-        model_name=model_name,
-        model_kwargs=model_kwargs,
-        encode_kwargs=encode_kwargs,
-        cache_folder=HF_HOME,
-        **kwargs,
-    )
-
-
-@st.cache_data
-def download_data_from_hub(**kwargs) -> str:
-    repo_id = "joshuasundance/govgis_nov2023-slim-spatial"
-    filename = "govgis_nov2023-slim-nospatial.faiss.bytes"
-    repo_type = "dataset"
-    return hf_hub_download(
-        repo_id=repo_id,
-        filename=filename,
-        repo_type=repo_type,
-        cache_dir=HF_HOME,
-        **kwargs,
-    )
-
-
-@st.cache_resource
-def get_faiss(
-    serialized_bytes_path: Optional[str] = None,
-    embeddings: Optional[HuggingFaceBgeEmbeddings] = None,
-) -> FAISS:
-    serialized_bytes_path = serialized_bytes_path or download_data_from_hub()
-    with open(serialized_bytes_path, "rb") as infile:
-        return FAISS.deserialize_from_bytes(
-            embeddings=embeddings or get_embedding_model(),
-            serialized=infile.read(),
-        )
-
-
-def _combine_documents(
-    docs: list[Document],
-    document_separator: str = "\n\n",
-) -> str:
-    return document_separator.join(f"```yaml\n{doc.page_content}\n```" for doc in docs)
-
-
-rephrase_template = """Given the User Input, return an English natural language Search Query that will return the most relevant documents.
-Remember, you are working with a semantic search engine. It is not based solely on keywords or Google-Fu.
-Be creative with your search query.
-Your entire response will be fed directly into the search engine. Omit any text that is not part of the search query.
-
-User Input: {question}"""
-REPHRASE_QUESTION_PROMPT = PromptTemplate.from_template(rephrase_template)
-
-
-answer_template = """The following search results were found for the given user query.
-Provide a description of the relevant search results, providing relevant URLs and details.
-Describing the search results in the context of the query is more important than answering the query.
-Do not answer without referring to the search results; the search results are the most important part of the answer.
-Base your response on the search results.
-Always provide a URL when referencing a specific service, dataset, or API.
-If multiple search results are relevant to the user's query, describe each result separately.
-Describe what sets each result apart from the others.
-Be detailed and specific, so the user can find the information they need.
-Format your response as markdown as appropriate.
-----------------
-Search Results:
-{context}
-----------------
-Question: {question}"""
-ANSWER_PROMPT = ChatPromptTemplate.from_template(answer_template)
-
-
-def get_chain(rephrase_llm, answer_llm, retriever):
-    """
-    Return a chain that rephrases, retrieves, and responds.
-
-    Output keys:
-    - search_query: str
-    - docs: list[Document]
-    - answer: str
-    """
-    return (
-        # rephrase
-        REPHRASE_QUESTION_PROMPT
-        | rephrase_llm
-        | {"search_query": StrOutputParser()}
-        # retrieve
-        | {
-            "search_query": itemgetter("search_query"),
-            "docs": itemgetter("search_query") | retriever,
-            "question": itemgetter("search_query"),
-        }
-        # respond
-        | {
-            "search_query": itemgetter("search_query"),
-            "docs": itemgetter("docs"),
-            "answer": (
-                {
-                    "context": (lambda x: _combine_documents(x["docs"])),
-                    "question": itemgetter("question"),
-                }
-                | ANSWER_PROMPT
-                | answer_llm
-                | StrOutputParser()
-            ),
-        }
-    )
-
-
-db = get_faiss()
-retriever = db.as_retriever(
-    search_kwargs={"k": st.session_state.search_result_limit},
-)
-
-if st.session_state.anthropic_api_key:
-    rephrase_llm = ChatAnthropic(
-        model="claude-instant-v1"
-        if st.session_state.use_instant_for_rephrase
-        else "claude-2.1",
-        temperature=st.session_state.temperature,
-        max_tokens_to_sample=512,
-        anthropic_api_key=st.session_state.anthropic_api_key,
-    )
-
-    answer_llm = ChatAnthropic(
-        model="claude-2.1",
-        temperature=st.session_state.temperature,
-        max_tokens_to_sample=st.session_state.max_tokens,
-        anthropic_api_key=st.session_state.anthropic_api_key,
-    )
-
-    st.session_state.chain = get_chain(rephrase_llm, answer_llm, retriever)
-
-
-user_input = st.text_input(
-    "What are you looking for?",
-    value="",
-)
-
-doc_md = """## [{name}]({url})
-
-### Type
-{type}
-
-### Description
-{description}
-
-### Parent Service Description
-{parent_service_description}
-
-### Fields
-{fields}
+Per ``docs/modernization-plan.md``'s "Target architecture", this module owns
+*only* UI composition and event wiring: it loads a ``govgis.retrieval``
+index, calls ``govgis.retrieval.RetrievalIndex.search``, converts each
+``SearchResult`` to a ``SafePresentationRecord`` via
+``govgis.presentation.gis_record_to_safe_presentation`` (the only module
+permitted to construct that type), and renders the result. It must never
+construct a ``SafePresentationRecord`` itself and must never bind ``gr.HTML``
+to dataset-, user-, or model-sourced content -- see "Unsafe rendering" in the
+plan. This stage is retrieval-only: the optional provider-neutral
+answer-synthesis call (Stage 4) is not implemented here, only left a place to
+compose in (see ``_render_results_markdown`` below).
 """
 
+from __future__ import annotations
 
-def display_docs(docs: list[Document]) -> None:
-    missing_value = ""
-    for doc in docs:
-        data = yaml.safe_load(doc.page_content)
-        st.markdown(f"## [{data['name']}]({data['url']})")
-        st.markdown(f"### Type\n{data['type']}")
-        st.markdown("### Description")
-        st.components.v1.html(data.get("description", missing_value))
-        st.markdown("### Parent Service Description")
-        st.components.v1.html(data.get("parent_service_description", missing_value))
-        if data.get("fields", None):
-            st.markdown("### Fields")
-            for field in data["fields"]:
-                st.markdown(f"- {field}")
+import os
+from collections.abc import Iterator
+from pathlib import Path
+
+import gradio as gr
+
+from govgis.artifacts import MANIFEST_FILENAME, ArtifactError
+from govgis.models import SafePresentationRecord, SearchResult
+from govgis.presentation import gis_record_to_safe_presentation
+from govgis.retrieval import (
+    DEFAULT_TOP_K,
+    RetrievalArtifactPaths,
+    RetrievalError,
+    RetrievalIndex,
+    load_retrieval_index,
+)
+
+ARTIFACT_DIR_ENV_VAR = "GOVGIS_ARTIFACT_DIR"
+
+# Falls back to the real one-time-converted artifact set produced locally by
+# Stage 2 (see this file's Stage 3 lane report) so local/browser testing
+# exercises real retrieval. The deployed Space always sets GOVGIS_ARTIFACT_DIR
+# explicitly (Stage 5/6 scope, per the modernization plan's mid-run
+# amendment) -- this default only matters for local development and must
+# never be relied on in production.
+_LOCAL_DEV_ARTIFACT_DIR = Path(__file__).resolve().parent / "scratch" / "artifacts"
+
+_INDEX_FILENAME = "index.faiss"
+_DOCUMENTS_FILENAME = "documents.jsonl"
+
+_MIN_TOP_K = 1
+_MAX_TOP_K = 10
+
+_APP_TITLE = "govgis semantic search"
+_APP_DESCRIPTION = (
+    "Semantic search over `govgis_nov2023` GIS metadata (government ArcGIS "
+    "servers and layers). Search works without signing in or an API key. "
+    "AI-generated answers are not available yet."
+)
+_IDLE_MESSAGE = "Enter a query above and press **Search**."
+_LOADING_MESSAGE = "_Searching…_"
+_NO_RESULTS_MESSAGE = "No results found for that search. Try different or broader terms."
+# Deliberately generic: govgis.artifacts/govgis.retrieval error messages can
+# include server-side file paths (see e.g. ArtifactError subclasses), which
+# is fine for logs but not something to echo verbatim to a public UI.
+_ERROR_MESSAGE = (
+    "**Search is temporarily unavailable.** Please try again in a moment; "
+    "if the problem persists, retrieval results may be visible again shortly."
+)
+
+_retrieval_index: RetrievalIndex | None = None
 
 
-if user_input:
-    if st.session_state.chain is not None:
-        result = st.session_state.chain.invoke(dict(question=user_input))
-        st.markdown("# Query")
-        st.markdown(result["search_query"])
-        st.markdown("# Answer")
-        st.markdown(result["answer"])
-        st.markdown("# Documents")
-        display_docs(result["docs"])
-    else:
-        results = retriever.invoke(user_input)
-        display_docs(results)
+def _artifact_dir() -> Path:
+    raw = os.environ.get(ARTIFACT_DIR_ENV_VAR)
+    return Path(raw).expanduser() if raw else _LOCAL_DEV_ARTIFACT_DIR
+
+
+def _artifact_paths() -> RetrievalArtifactPaths:
+    artifact_dir = _artifact_dir()
+    return RetrievalArtifactPaths(
+        index_path=artifact_dir / _INDEX_FILENAME,
+        records_path=artifact_dir / _DOCUMENTS_FILENAME,
+        manifest_path=artifact_dir / MANIFEST_FILENAME,
+    )
+
+
+def _get_retrieval_index() -> RetrievalIndex:
+    # Lazy, cached on first successful load: importing this module must never
+    # load a ~1.2 GB embedding model or a 865k-vector FAISS index, since that
+    # would make plain `import app` (e.g. from a test collector) prohibitively
+    # slow and would fail outright wherever GOVGIS_ARTIFACT_DIR's artifacts
+    # don't exist. A failed load is not cached, so the *next* search retries
+    # rather than staying broken for the life of the process.
+    global _retrieval_index
+    if _retrieval_index is None:
+        _retrieval_index = load_retrieval_index(_artifact_paths())
+    return _retrieval_index
+
+
+def _render_record_markdown(record: SafePresentationRecord) -> str:
+    lines = [f"### {record.name}", f"**Type:** {record.type}"]
+    if record.score is not None:
+        lines.append(f"**Relevance score:** {record.score:.4f}")
+    lines.append(record.description)
+    if record.parent_service_description:
+        lines.append(f"**Parent service:** {record.parent_service_description}")
+    if record.fields:
+        lines.append("**Fields:** " + ", ".join(record.fields))
+    if record.url is not None:
+        lines.append(f"[Open in ArcGIS REST]({record.url})")
+    return "\n\n".join(lines)
+
+
+def _render_results_markdown(results: list[SearchResult]) -> str:
+    # Stage 4 composition point: an optional govgis.providers.* answer
+    # synthesis call belongs here, between retrieval and presentation, per
+    # the plan's Target architecture ("app.py composes retrieval.py output
+    # with an optional providers/*.py call, in that order, and passes the
+    # result to presentation.py"). No provider exists yet -- retrieval-only
+    # for this stage. `SafePresentationRecord` has no answer field yet either
+    # (see govgis/presentation.py's module docstring); rendering a
+    # synthesized answer is an open question left to Stage 4/the coordinator,
+    # not solved here.
+    safe_records = [
+        gis_record_to_safe_presentation(result.record, score=result.score) for result in results
+    ]
+    return "\n\n---\n\n".join(_render_record_markdown(record) for record in safe_records)
+
+
+def _handle_search(query: str, top_k: float) -> Iterator[str]:
+    stripped_query = query.strip()
+    if not stripped_query:
+        yield _IDLE_MESSAGE
+        return
+
+    yield _LOADING_MESSAGE
+    try:
+        retrieval_index = _get_retrieval_index()
+        results = retrieval_index.search(stripped_query, top_k=int(top_k))
+    except RetrievalError, ArtifactError:
+        yield _ERROR_MESSAGE
+        return
+
+    if not results:
+        yield _NO_RESULTS_MESSAGE
+        return
+
+    yield _render_results_markdown(results)
+
+
+def build_app() -> gr.Blocks:
+    # Assigned from the constructor (not `with gr.Blocks(...) as demo:`) so
+    # `demo`'s static type stays `gr.Blocks`: Gradio's `Blocks.__enter__` has
+    # no return annotation, which mypy otherwise widens to `Any` and leaks
+    # through this function's declared return type.
+    demo = gr.Blocks(title=_APP_TITLE)
+    with demo:
+        gr.Markdown(f"# {_APP_TITLE}", sanitize_html=True)
+        gr.Markdown(_APP_DESCRIPTION, sanitize_html=True)
+
+        with gr.Row():
+            query_box = gr.Textbox(
+                label="Search query",
+                placeholder="e.g. Where are the FEMA flood hazard zones?",
+                scale=4,
+            )
+            top_k_slider = gr.Slider(
+                minimum=_MIN_TOP_K,
+                maximum=_MAX_TOP_K,
+                value=DEFAULT_TOP_K,
+                step=1,
+                label="Number of results",
+                scale=1,
+            )
+
+        with gr.Row():
+            search_button = gr.Button("Search", variant="primary")
+            retry_button = gr.Button("Retry last search")
+
+        # sanitize_html=True is Gradio's own default; set explicitly so a
+        # future Gradio default change can't silently reopen the raw-HTML
+        # XSS path this app is built to avoid (see "Unsafe rendering" in the
+        # modernization plan). Every value ever bound to this component is a
+        # static string built in this module or a SafePresentationRecord
+        # rendered through _render_record_markdown -- never gr.HTML, and
+        # never a raw dataset/user/model-sourced value.
+        results_markdown = gr.Markdown(_IDLE_MESSAGE, sanitize_html=True)
+
+        last_query_state = gr.State("")
+
+        search_event = search_button.click(
+            fn=_handle_search,
+            inputs=[query_box, top_k_slider],
+            outputs=[results_markdown],
+        )
+        search_event.then(
+            fn=lambda query: query,
+            inputs=[query_box],
+            outputs=[last_query_state],
+        )
+
+        submit_event = query_box.submit(
+            fn=_handle_search,
+            inputs=[query_box, top_k_slider],
+            outputs=[results_markdown],
+        )
+        submit_event.then(
+            fn=lambda query: query,
+            inputs=[query_box],
+            outputs=[last_query_state],
+        )
+
+        retry_event = retry_button.click(
+            fn=_handle_search,
+            inputs=[last_query_state, top_k_slider],
+            outputs=[results_markdown],
+        )
+        retry_event.then(
+            fn=lambda query: query,
+            inputs=[last_query_state],
+            outputs=[query_box],
+        )
+
+    return demo
+
+
+demo = build_app()
+
+if __name__ == "__main__":
+    demo.launch()

@@ -11,9 +11,9 @@ Stage 1 generates `requirements.txt` from `uv.lock` as a committed artifact
 
 This module asserts the post-Stage-1 contract: Python 3.14, and a
 requirements.txt derived from the new pyproject.toml dependency set (no
-LangChain/LangSmith, the new runtime dependency list present). `sdk` and
-`sdk_version` intentionally stay pinned to their current (Streamlit) values
-here -- Stage 3 owns migrating those once the Gradio app exists.
+LangChain/LangSmith, the new runtime dependency list present). `sdk`/
+`sdk_version` assert the Stage 3 Gradio contract (see app.py and this file's
+`test_readme_front_matter_declares_gradio_sdk`).
 """
 
 from __future__ import annotations
@@ -94,10 +94,13 @@ class SpaceBuildContractTests(unittest.TestCase):
         metadata = _space_metadata()
         self.assertEqual("3.14", metadata.get("python_version"))
 
-    def test_readme_front_matter_sdk_unchanged_pending_stage_3(self) -> None:
+    def test_readme_front_matter_declares_gradio_sdk(self) -> None:
+        # Stage 3: sdk/sdk_version now track the actual installed Gradio
+        # version (see app.py's Stage 3 lane report) rather than the legacy
+        # Streamlit contract this test asserted pre-Stage-3.
         metadata = _space_metadata()
-        self.assertEqual("streamlit", metadata.get("sdk"))
-        self.assertEqual("1.29.0", metadata.get("sdk_version"))
+        self.assertEqual("gradio", metadata.get("sdk"))
+        self.assertEqual("6.20.0", metadata.get("sdk_version"))
 
     def test_requirements_txt_reflects_new_dependency_set(self) -> None:
         requirement_names = _requirement_names()

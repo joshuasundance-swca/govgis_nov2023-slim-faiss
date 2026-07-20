@@ -229,8 +229,7 @@ def load_records(records_path: Path, *, manifest: ArtifactManifest) -> list[GisR
                     records.append(GisRecord.model_validate(raw_record))
                 except ValidationError as exc:
                     msg = (
-                        f"record at {documents_path}:{line_number} "
-                        f"failed schema validation: {exc}"
+                        f"record at {documents_path}:{line_number} failed schema validation: {exc}"
                     )
                     raise ManifestValidationError(msg) from exc
     except OSError as exc:

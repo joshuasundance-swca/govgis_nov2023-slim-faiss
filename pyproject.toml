@@ -62,11 +62,14 @@ explicit = true
 [tool.ruff]
 target-version = "py314"
 line-length = 100
-# app.py is the legacy Streamlit/LangChain app Stage 1 deliberately does not
-# touch (replaced by Stage 3); docs/stage0 is one-off dataset-grounding
-# tooling that depends on pandas, which is intentionally not a project
-# dependency. See the Stage 1 packaging-lane report for the full rationale.
-extend-exclude = ["app.py", "docs/stage0"]
+# docs/stage0 is one-off dataset-grounding tooling that depends on pandas,
+# which is intentionally not a project dependency. See the Stage 1
+# packaging-lane report for the full rationale. app.py was excluded here
+# through Stage 1/2 as the legacy Streamlit/LangChain app Stage 3 would
+# replace; Stage 3 has now rewritten it as real, typed, lint-clean Gradio
+# product code (see app.py's Stage 3 lane report), so it must be covered by
+# the gate like any other source file, not silently skipped by `ruff check .`.
+extend-exclude = ["docs/stage0"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "C4", "SIM", "S", "N", "PTH", "RUF", "W"]
@@ -78,14 +81,15 @@ select = ["E", "F", "I", "UP", "B", "C4", "SIM", "S", "N", "PTH", "RUF", "W"]
 python_version = "3.14"
 strict = true
 warn_unreachable = true
-# Same rationale as the ruff extend-exclude above: app.py and docs/stage0 are
-# out of Stage 1's scope and are not installable against this project's
-# dependency set (app.py needs streamlit/langchain, docs/stage0 needs pandas
-# -- none are declared dependencies here). scratch/ is git-excluded, per-
-# contributor scratch content (unlike ruff, mypy does not honor .gitignore),
-# so it must be excluded explicitly to keep `mypy .` reproducible across
-# machines.
-exclude = "^(app\\.py|docs/stage0/|scratch/)"
+# Same rationale as the ruff extend-exclude above: docs/stage0 is out of
+# Stage 1's scope and not installable against this project's dependency set
+# (needs pandas, not a declared dependency here). scratch/ is git-excluded,
+# per-contributor scratch content (unlike ruff, mypy does not honor
+# .gitignore), so it must be excluded explicitly to keep `mypy .`
+# reproducible across machines. app.py is no longer excluded -- see the ruff
+# extend-exclude comment above; it is real, typed, mypy-strict-clean Gradio
+# code as of Stage 3.
+exclude = "^(docs/stage0/|scratch/)"
 
 [tool.pytest.ini_options]
 minversion = "8.0"

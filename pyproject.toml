@@ -1,0 +1,93 @@
+[project]
+name = "govgis"
+version = "0.0.3"
+description = "Semantic search over govgis_nov2023 GIS metadata (FAISS + BAAI/bge-large-en-v1.5), with optional BYOK LLM answer synthesis, as a Hugging Face Gradio Space."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.14"
+dependencies = [
+    "anthropic>=0.117.0",
+    "faiss-cpu>=1.14.3",
+    "gradio>=6.20.0",
+    "httpx>=0.28.1",
+    "huggingface-hub>=1.24.0",
+    "openai>=2.46.0",
+    "pydantic>=2.13.4",
+    "pyyaml>=6.0.3",
+    "sentence-transformers>=5.6.0",
+    "tenacity>=9.1.4",
+    # Declared directly (not just left as sentence-transformers' transitive
+    # pull) so the [tool.uv.sources] CPU-only index redirect below actually
+    # applies -- uv only honors tool.uv.sources overrides for packages that
+    # appear in the resolved requirement graph's root, not purely transitive
+    # ones; verified live 2026-07-20 (see [tool.uv.sources] comment).
+    "torch>=2.13.0",
+]
+
+[dependency-groups]
+dev = [
+    "bandit>=1.9.4",
+    "mypy>=2.3.0",
+    "playwright>=1.61.0",
+    "pre-commit>=4.6.0",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "pytest-playwright>=0.8.0",
+    "ruff>=0.15.22",
+    "types-pyyaml>=6.0.12.20260518",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# torch is only ever needed here as a sentence-transformers backend, but
+# PyPI's default Linux torch wheel bundles CUDA and pulls in several GB of
+# nvidia-*/cuda-* packages as hard (non-optional) dependencies regardless of
+# GPU presence -- verified live 2026-07-20: an unredirected `uv export`
+# pulled nvidia-cublas, nvidia-cudnn, cuda-toolkit, etc. under
+# `sys_platform == 'linux'` markers. The target Space hardware is `cpu-basic`
+# (no GPU) per the modernization plan's "Startup and storage strategy", so
+# redirect torch to PyTorch's official CPU-only index (confirmed to publish
+# cp314 wheels for both manylinux_2_28_x86_64 and win_amd64) to keep the
+# deployed requirements.txt free of that bloat.
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+# app.py is the legacy Streamlit/LangChain app Stage 1 deliberately does not
+# touch (replaced by Stage 3); docs/stage0 is one-off dataset-grounding
+# tooling that depends on pandas, which is intentionally not a project
+# dependency. See the Stage 1 packaging-lane report for the full rationale.
+extend-exclude = ["app.py", "docs/stage0"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4", "SIM", "S", "N", "PTH", "RUF", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+warn_unreachable = true
+# Same rationale as the ruff extend-exclude above: app.py and docs/stage0 are
+# out of Stage 1's scope and are not installable against this project's
+# dependency set (app.py needs streamlit/langchain, docs/stage0 needs pandas
+# -- none are declared dependencies here). scratch/ is git-excluded, per-
+# contributor scratch content (unlike ruff, mypy does not honor .gitignore),
+# so it must be excluded explicitly to keep `mypy .` reproducible across
+# machines.
+exclude = "^(app\\.py|docs/stage0/|scratch/)"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra --strict-markers --strict-config"
+testpaths = ["tests"]

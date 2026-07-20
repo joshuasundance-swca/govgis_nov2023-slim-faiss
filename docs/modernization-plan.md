@@ -645,6 +645,26 @@ Actions:
 - create GitHub Actions CI to run the complete gate — no workflow today runs
   any test, lint, or type-check tier, so this is a new job, not an update to
   an existing one;
+- **generate `requirements.txt` from the uv lockfile** (e.g. `uv export
+  --no-dev --format requirements-txt -o requirements.txt`) and add it as a
+  committed artifact plus a CI drift check. `pyproject.toml`/`uv.lock` govern
+  the *dev/CI* environment only — confirmed against Hugging Face's
+  `spaces-dependencies` docs, the live Gradio/Streamlit Space build only ever
+  reads `requirements.txt`/`pre-requirements.txt`/`packages.txt`, never
+  `pyproject.toml` or `uv.lock` directly. Without this, Stage 1's gate could
+  pass locally and in CI while the deployed Space either fails to build (no
+  `requirements.txt`) or silently installs a stale hand-written one
+  (audit finding TECH-CHOICE-01, `audit-recommendations/tech-choice.md`);
+- update `README.md`'s YAML front matter `python_version: "3.14"` at this
+  stage (the front matter, not `.python-version` or `pyproject.toml`, is what
+  the Space build actually reads for its Python version per
+  `spaces-config-reference`); `sdk`/`sdk_version` move to Stage 3 (when the
+  Gradio app exists) and `hf_oauth`/`hf_oauth_scopes` to Stage 4 — see those
+  stages;
+- rewrite `tests/test_space_build_contract.py`'s asserted values for the new
+  contract — it currently pins the Streamlit/3.11/`requirements.txt`-has-no-streamlit
+  contract and will fail, or worse silently keep passing on stale assertions,
+  once this stage changes what it should be asserting;
 - once that CI gate is green, configure GitHub branch protection on `main`
   requiring the new CI check(s) as required status checks, with
   admin-enforcement on, and record the exact required-check name(s) here once
@@ -663,7 +683,12 @@ Gate:
 - branch protection on `main` is confirmed active with the CI gate as a
   required status check (verify via the same `branches/main/protection` API
   call used to establish this document's baseline — it must no longer return
-  404).
+  404);
+- committed `requirements.txt` is generated from and matches `uv.lock`,
+  CI-checked (not only documented) so drift fails the build;
+- `README.md`'s front-matter `python_version` matches the target Python
+  version, and `tests/test_space_build_contract.py` is green against this
+  new contract, not the stale Streamlit/3.11 one.
 
 Rollback:
 
@@ -711,7 +736,11 @@ Actions:
 - render only validated presentation models — the safe presentation model
   type owned by `govgis/models.py` and produced only by
   `govgis/presentation.py` (see "Target architecture");
-- test hostile HTML, Markdown, URLs, and oversized fields in a real browser.
+- test hostile HTML, Markdown, URLs, and oversized fields in a real browser;
+- update `README.md`'s YAML front matter `sdk: gradio` and `sdk_version`
+  pinned to the actual installed Gradio version — this is what the Space
+  build reads, not any dependency pin in `pyproject.toml`/`requirements.txt`
+  (see Stage 1's `requirements.txt`/front-matter action).
 
 Gate:
 
@@ -721,7 +750,10 @@ Gate:
   content anywhere in the codebase — e.g. a grep/lint rule that fails the
   gate on any such usage;
 - local Gradio API and browser smoke tests pass;
-- required GIS fields and links are visible and usable.
+- required GIS fields and links are visible and usable;
+- `README.md`'s `sdk`/`sdk_version` front matter matches the actual Gradio
+  version in use, asserted by `tests/test_space_build_contract.py` (or its
+  Gradio-era equivalent).
 
 Rollback:
 
@@ -747,13 +779,19 @@ Actions:
   the decision is auditable, not asserted in prose;
 - implement bounded timeouts, retries limited to transient/5xx failures, and
   a per-session concurrency limit for provider calls (starting numbers: see
-  "Secrets, cost, and public abuse").
+  "Secrets, cost, and public abuse");
+- update `README.md`'s YAML front matter `hf_oauth: true` and
+  `hf_oauth_scopes: [inference-api]` — this is the actual mechanism HF Spaces
+  uses to enable OAuth (confirmed against `spaces-oauth` docs), not anything
+  configured in application code alone.
 
 Gate:
 
 - the provider/model comparison table exists in the repo and the chosen
   defaults are traceable to it — a functional-but-unbenchmarked default does
   not satisfy this gate;
+- `README.md`'s `hf_oauth`/`hf_oauth_scopes` front matter is present and
+  correctly scoped, asserted by a test;
 - a forced-failure test (e.g. an invalid test key) asserts no substring of the
   test key appears in captured logs, exceptions, or telemetry;
 - a simulated slow/failing provider test asserts the timeout, retry-limit, and

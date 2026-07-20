@@ -89,7 +89,30 @@ Claude Code completed the plan's own "Review mandate for Claude Code": an 8-axis
 (31 confirmed findings, 0 critical, 1 high) is applied directly to `docs/modernization-plan.md` on
 branch `docs/modernization-plan`. Full evidence and methodology: `audit-recommendations/`. Nothing
 has been implemented — this was a plan review, not a code change. Before starting Stage 0, read the
-plan's "Claude Code review — 2026-07-20" section (near the top) for the verdict summary.
+plan's "Claude Code review — 2026-07-20" section (near the top) and the "Implementation orchestration
+strategy" subsection (under "Staged implementation and gates") for the verdict and execution plan.
+
+## Implementation approach: orchestrate Stages 1–4, gate Stages 5–6 manually
+
+Decided 2026-07-20 (full rationale in the plan's "Implementation orchestration strategy"
+subsection): **Stage 0 runs inline** (small, partly bottlenecked on authenticated-log access, not
+compute). **Stages 1–4 run as one continuous multi-agent orchestration effort** — parallel
+disjoint-file build lanes within each stage, adversarial verification against that stage's actual
+Gate bullets (not a self-report), bounded fix loops, and the coordinator re-running the stage's real
+Gate commands before advancing. If this session is Claude Code with dynamic Workflow orchestration
+available, that's the mechanism (see the `workflow-orchestration` skill — author the script fresh
+per that skill's guidance, using the plan's lane breakdown as the spec, not a script to replay). In
+any other harness, the same PRINCIPLE applies even without that specific tool: parallelize disjoint
+files within a stage, verify against the stage's Gate before calling it done, and do not skip or
+merge stage-gate checkpoints for speed.
+
+Two hard boundaries, regardless of harness or orchestration mode: (1) orchestration accelerates the
+*work* inside a stage, never the *stage-gate sequence* — Stage 3 cannot meaningfully start before
+Stage 2's Gate passes, because it needs Stage 2's actual retrieval core and types; (2) **Stages 5
+(staging) and 6 (production) are not orchestrated at all** — creating the real staging Space,
+merging to `main`, and deploying to the public production Space are external, hard-to-reverse,
+outward-facing actions that require the user's explicit go-ahead at the time, never a blanket
+up-front authorization.
 
 ## For a cold session (Codex, Claude Code, or otherwise) picking this up
 

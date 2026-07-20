@@ -54,6 +54,11 @@ concurrency numbers to Stage 4; preserve MIT license/attribution in the
 README rewrite; and record a lightweight review/enforcement note for this
 single-maintainer repo.
 
+**Addendum, same day:** the user and Claude Code agreed implementation should
+use multi-agent Workflow orchestration to accelerate Stages 1–4, while keeping
+Stage 0 inline and Stages 5–7 gated/manual. See "Implementation orchestration
+strategy" under "Staged implementation and gates" below.
+
 ## Confirmed decisions
 
 1. Migrate the UI from the built-in Streamlit Space SDK — no longer offered
@@ -440,6 +445,69 @@ Select the winner using cold-start time, rebuild time, failure rate, disk use,
 and operational complexity. Do not optimize only one restart.
 
 ## Staged implementation and gates
+
+### Implementation orchestration strategy (added 2026-07-20)
+
+Decided with the user after the Claude Code review above: use multi-agent
+Workflow orchestration ("ultracode") to accelerate the *buildable* stages,
+but do not let orchestration compress the stage-gate sequence itself or
+touch anything external/irreversible without an explicit human go/no-go.
+Orchestration speeds up the work inside a stage (parallel disjoint-file
+build lanes, fan-out adversarial verification against that stage's actual
+Gate bullets, bounded fix loops); it does not replace a stage's Gate as the
+advance/no-advance decision, and it does not shrink the real dependency
+chain between stages — Stage 3 still cannot start meaningfully before
+Stage 2's Gate passes, because Stage 3 needs Stage 2's actual retrieval
+core and types to exist.
+
+**Grouping:**
+
+- **Stage 0** — run inline/coordinator-led, not as a fan-out. It's small
+  (a query set, a few API calls, a few recorded values) and partly bottlenecked
+  on authenticated-log access, which more agents can't accelerate.
+- **Stages 1–4 — one continuous orchestrated effort.** These are genuinely
+  buildable, verifiable, disjoint-file work. Suggested lane shape (a future
+  session should author the actual Workflow script fresh, per the
+  `workflow-orchestration` skill — this is the spec, not the script):
+  - *Stage 1*: 2 lanes — packaging (`pyproject.toml`, lockfile,
+    `.python-version`, package layout) and tooling (pre-commit, Ruff, mypy,
+    CI workflow creation). Verify against Stage 1's Gate. **Then**, as a
+    separate, deliberate, non-parallel step: configure GitHub branch
+    protection against the now-existing CI check — this mutates shared
+    repo state and should get an explicit go-ahead before applying, same
+    as any other GitHub-visible change.
+  - *Stage 2*: parallel lanes for `govgis/models.py` (GIS record/result/safe
+    presentation types), `govgis/artifacts.py` (manifest/checksum
+    validation), `govgis/retrieval.py` (embedding + FAISS search), and the
+    failing-tests-first lane — plus **one single, coordinator-run, non-parallel
+    conversion of the actual pinned legacy artifact** (isolated, no-network,
+    once). Do not let multiple agents race on the real conversion step.
+    Verify against Stage 2's Gate, including the Stage 0-recorded threshold
+    and the no-network proof.
+  - *Stage 3*: lanes for `govgis/presentation.py` (link validation, escaping,
+    the durable "no `gr.HTML` on untrusted content" lint check) and `app.py`'s
+    Gradio Blocks composition. Verify with real browser-level tests.
+  - *Stage 4*: `govgis/providers/base.py` first (small, fast, others depend on
+    it), then true parallel lanes for `anthropic.py`, `openai.py`,
+    `huggingface.py` (fully disjoint files), plus the provider/model
+    comparison-table action, the BYOK secret-leak test, and the
+    timeout/retry/concurrency test. Verify against Stage 4's Gate.
+  - Verifiers get an explicit top-tier model (never left on inherit); mechanical
+    scaffolding lanes can tier down. Every stage's fan-out is followed by the
+    coordinator re-running that stage's actual Gate commands before declaring
+    it done — a green build report is not the gate.
+- **Stage 5 (staging)** — narrow and mostly sequential: creating the actual
+  staging Space is a real external resource with a real (if temporary) cost
+  and footprint; get an explicit go-ahead before creating it, even though its
+  ID was already decided in Stage 0. Waiting for real cold builds/restarts is
+  calendar-bound, not something a larger fan-out speeds up.
+- **Stage 6 (production rollout)** — no autonomous orchestration. This merges
+  to `main` and deploys to a public Space with real users; per standing policy,
+  it requires the user's explicit go-ahead at the time, not a blanket
+  authorization granted now for "as much work as possible."
+- **Stage 7 (footprint reduction)** — deferred; only after Stage 6 ships with
+  parity confirmed. Can reuse the same orchestration shape as Stages 1–4 when
+  picked up.
 
 ### Stage 0: baseline and test oracle
 

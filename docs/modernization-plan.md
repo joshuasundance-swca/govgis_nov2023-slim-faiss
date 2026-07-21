@@ -1037,16 +1037,20 @@ requirement — not a silent pass):
 | Provider (Anthropic) latency | UNVERIFIED (Stage 0; no key was spent) | Not measured (no real provider spend made here either, consistent with Josh's decision to defer quality/latency benchmarking) | **Not-yet-gatable**, same carve-out |
 | Security | N/A (new capability) | BYOK bad-key path confirmed to leak nothing on the real deployment (see smoke test above); HF OAuth path confirmed to require real sign-in | No regression — net new safeguards vs. the legacy app's hardcoded owner-adjacent model IDs |
 
-**Staging cleanup is deferred, not skipped**: the plan's own "temporary
-staging Space" principle keeps it alive "until the production deployment
-*and rollback window* are verified" — the rollback window's duration is
-still an open item (see "Open implementation-time questions"). The
-staging Space (`joshuasundance/govgis_nov2023-slim-faiss-staging`) remains
-up for now; deleting it is the one remaining Stage 6 action, gated on
-Josh deciding that duration.
+**Staging cleanup: complete.** Asked Josh for the rollback-observation
+window duration; his answer was to delete staging immediately rather than
+wait, given the smoke tests and independent SHA verification already
+completed above. The staging Space
+(`joshuasundance/govgis_nov2023-slim-faiss-staging`) was deleted via
+`HfApi().delete_repo(repo_type='space')` and its removal confirmed
+(`repo_info` raises `RepositoryNotFoundError`).
 
 **Gate: passed**, with the two Stage-0-UNVERIFIED metrics carried forward
 as not-yet-gatable rather than silently passed, per the Gate's own text.
+All Stage 6 actions are now complete; the modernization plan's Stages 0-6
+are fully done. Remaining plan content (Stage 7: evaluated footprint
+reduction, and the still-deferred provider quality/latency benchmarking)
+is explicitly optional future work, not outstanding gate items.
 
 ### Stage 7: evaluated footprint reduction
 
@@ -1181,6 +1185,7 @@ These are validation questions, not blockers to recording the plan:
   quality/latency/cost for grounded GIS result descriptions? Still open —
   Josh explicitly deferred this benchmarking decision (Stage 4 shipped all
   three providers unranked; see the Stage 4 deferral note).
-- How long should the production rollback observation window remain open
-  before deleting staging? **Still open** — this is the one remaining item
-  blocking Stage 6's staging-cleanup action; see "Stage 6 results".
+- ~~How long should the production rollback observation window remain open
+  before deleting staging?~~ Answered 2026-07-21: Josh chose immediate
+  deletion over waiting, given the independent SHA/smoke-test verification
+  already completed on production — see "Stage 6 results".

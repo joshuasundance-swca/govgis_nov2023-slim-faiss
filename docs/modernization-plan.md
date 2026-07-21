@@ -997,6 +997,57 @@ Rollback:
   rollback as returning to a previously accepted risk level, not a
   risk-free action.
 
+#### Stage 6 results (recorded 2026-07-21) — Gate passed (staging cleanup deferred to the rollback window)
+
+PR #47 merged to `main` (merge commit `d92e2034b5b87cb586db847d980dbfe6400520a5`)
+after all 7 required branch-protection checks passed. Before merging,
+`hf-space.yml` was updated per this stage's own action item: it now polls
+the Space API after `git push` and fails the job (rather than reporting
+false success) unless the Space reaches `RUNNING` at the pushed commit SHA
+within 20 minutes, or exits immediately on `BUILD_ERROR`/`RUNTIME_ERROR`/
+`CONFIG_ERROR`. Verified locally (YAML validity, real API field shapes, both
+the success and timeout/mismatch branches of the polling loop) before
+committing.
+
+The merge-triggered production deploy (`hf-space.yml` run `29797031200`)
+passed its own new verification step in 1m5s total (push + poll to
+`RUNNING`), and was independently re-verified by the coordinator directly
+against the Space API afterward — not trusted from the CI job's self-report
+alone:
+
+- `GET https://huggingface.co/api/spaces/joshuasundance/govgis_nov2023-slim-faiss`
+  → `.sha` == `d92e2034b5b87cb586db847d980dbfe6400520a5` (the merge SHA),
+  `.runtime.stage` == `RUNNING`, `.runtime.hardware` == `cpu-basic`.
+- Retrieval smoke test: the same 5 real Stage 0 queries used in Stage 5,
+  run against the live production Space via `gradio_client`, all 5/5
+  grounding-keyword hits, well-formed results.
+- Provider smoke test: HF (no OAuth) → correct sign-in-required message;
+  real-search → invalid-Anthropic-key chain → correct generic sanitized
+  error, no leak. No real provider spend made.
+
+**Explicit comparison against the Stage 0 baseline** (per this Gate's own
+requirement — not a silent pass):
+
+| Metric | Legacy baseline (Stage 0) | Modernized production | Regression? |
+|---|---|---|---|
+| Build (queued → build complete) | 2m26s (`pip install` alone: 93.1s) | ~1m5s for the whole deploy job (push + poll-to-RUNNING) — production's build layers were very likely warm from Stage 5's three staging builds against the identical commit/dependency set minutes earlier | No — faster |
+| Cold-start (container up → serving) | 70s | Not separately isolated from the build-job timing above; the deploy job as a whole (push → verified RUNNING) was faster than the legacy build step alone | No evidence of regression |
+| First-query latency | ~67s *(inferred estimate, Stage 0 marked this UNVERIFIED as a directly-measured value)* | ~52.69s, directly measured via `gradio_client` | No — comparable to faster, and this is now a real measurement instead of an estimate |
+| Peak RSS | UNVERIFIED (Stage 0) | Not directly measured (Space API exposes no RAM metric); indirect evidence: 3 staging cold builds + 1 production deploy, all `RUNNING` on `cpu-basic` with no hardware auto-upgrade and no `RUNTIME_ERROR`/OOM | **Not-yet-gatable**, per this Gate's own carve-out for a Stage-0-UNVERIFIED metric — not silently passed |
+| Provider (Anthropic) latency | UNVERIFIED (Stage 0; no key was spent) | Not measured (no real provider spend made here either, consistent with Josh's decision to defer quality/latency benchmarking) | **Not-yet-gatable**, same carve-out |
+| Security | N/A (new capability) | BYOK bad-key path confirmed to leak nothing on the real deployment (see smoke test above); HF OAuth path confirmed to require real sign-in | No regression — net new safeguards vs. the legacy app's hardcoded owner-adjacent model IDs |
+
+**Staging cleanup is deferred, not skipped**: the plan's own "temporary
+staging Space" principle keeps it alive "until the production deployment
+*and rollback window* are verified" — the rollback window's duration is
+still an open item (see "Open implementation-time questions"). The
+staging Space (`joshuasundance/govgis_nov2023-slim-faiss-staging`) remains
+up for now; deleting it is the one remaining Stage 6 action, gated on
+Josh deciding that duration.
+
+**Gate: passed**, with the two Stage-0-UNVERIFIED metrics carried forward
+as not-yet-gatable rather than silently passed, per the Gate's own text.
+
 ### Stage 7: evaluated footprint reduction
 
 Only after parity, benchmark:
@@ -1105,17 +1156,31 @@ These are validation questions, not blockers to recording the plan:
 - ~~What are the measured current cold-start, load, and peak-RSS values?~~
   Answered by Stage 0 for cold-start/load (with one inferred figure); peak
   RSS stays UNVERIFIED — see "Stage 0 results".
-- Does the current Space platform successfully build the selected Python 3.14
-  dependency set?
-- Does `preload_from_hub` resolve the dataset repository and pinned file as
-  expected, or should the safe index live in a dedicated model repository?
-- What is the exact document/vector count in the legacy artifact?
+- ~~Does the current Space platform successfully build the selected Python
+  3.14 dependency set?~~ Answered by Stage 5/6: yes, but only after fixing
+  four real `requirements.txt`/dependency incompatibilities with the actual
+  HF Dockerfile invocation — see "Stage 5 results".
+- ~~Does `preload_from_hub` resolve the dataset repository and pinned file
+  as expected, or should the safe index live in a dedicated model
+  repository?~~ Superseded, not directly answered: Stage 5 went straight to
+  "a dedicated versioned Hub repository" (the plan's own preferred option,
+  per Josh's "get it up and running" decision to skip the intermediate
+  storage-strategy experiments) and fetches it via `hf_hub_download` at
+  request time rather than `preload_from_hub` at build time — see "Stage 5
+  results". `preload_from_hub`'s own behavior was never separately tested.
+- ~~What is the exact document/vector count in the legacy artifact?~~
+  Answered: 865,304 (see the manifest in
+  `joshuasundance/govgis_nov2023-slim-faiss-index`, and the dataset card's
+  provenance section).
 - ~~What retrieval-quality threshold and query set should govern index
   changes?~~ Answered by Stage 0: the query set is
   `docs/stage0/query_set.json`; the threshold is the Recall@3 parity
   procedure in "Stage 0 results" (the absolute number is still open until
   Stage 2 measures it).
 - Which current Anthropic, OpenAI, and HF models offer the best measured
-  quality/latency/cost for grounded GIS result descriptions?
-- How long should the production rollback observation window remain open before
-  deleting staging?
+  quality/latency/cost for grounded GIS result descriptions? Still open —
+  Josh explicitly deferred this benchmarking decision (Stage 4 shipped all
+  three providers unranked; see the Stage 4 deferral note).
+- How long should the production rollback observation window remain open
+  before deleting staging? **Still open** — this is the one remaining item
+  blocking Stage 6's staging-cleanup action; see "Stage 6 results".

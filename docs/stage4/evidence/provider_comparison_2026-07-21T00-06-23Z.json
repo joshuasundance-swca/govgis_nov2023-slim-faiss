@@ -1,0 +1,131 @@
+{
+  "generated_at_utc": "2026-07-21T00-06-23Z",
+  "quality_score_status": "UNVERIFIED for every provider/model: no funded ANTHROPIC_API_KEY, OPENAI_API_KEY, or HF_TOKEN was available in this environment to make real generation calls against docs/stage0/query_set.json's queries. Real keys detected in this run's environment (never written anywhere else in this evidence file): {\"anthropic\": false, \"openai\": false, \"huggingface\": false}",
+  "auth_rejection_latency_note": "These are AUTH-REJECTION latencies from real network calls with a deliberately invalid credential -- the request fails before any model ever runs. This is NOT generation latency and must never be read as such.",
+  "auth_rejection_results": [
+    {
+      "provider": "anthropic",
+      "model_used_for_call": "claude-sonnet-5",
+      "repetitions": 7,
+      "all_raised_provider_auth_error": true,
+      "no_key_substring_leaked": true,
+      "latency_seconds_min": 0.09380709999823011,
+      "latency_seconds_p50": 0.09666519999882439,
+      "latency_seconds_p95": 0.2670628999985638,
+      "latency_seconds_max": 0.2670628999985638,
+      "raw_latencies_seconds": [
+        0.2671,
+        0.0943,
+        0.0974,
+        0.095,
+        0.0967,
+        0.0938,
+        0.101
+      ],
+      "unexpected_exception_types": []
+    },
+    {
+      "provider": "openai",
+      "model_used_for_call": "gpt-5.6-terra",
+      "repetitions": 7,
+      "all_raised_provider_auth_error": true,
+      "no_key_substring_leaked": true,
+      "latency_seconds_min": 0.32649880000099074,
+      "latency_seconds_p50": 0.3368463000006159,
+      "latency_seconds_p95": 0.7917631000018446,
+      "latency_seconds_max": 0.7917631000018446,
+      "raw_latencies_seconds": [
+        0.7918,
+        0.4067,
+        0.3265,
+        0.3356,
+        0.3289,
+        0.3605,
+        0.3368
+      ],
+      "unexpected_exception_types": []
+    },
+    {
+      "provider": "huggingface",
+      "model_used_for_call": "openai/gpt-oss-120b",
+      "repetitions": 7,
+      "all_raised_provider_auth_error": true,
+      "no_key_substring_leaked": true,
+      "latency_seconds_min": 0.07519509999838192,
+      "latency_seconds_p50": 0.07787319999624742,
+      "latency_seconds_p95": 0.39979029999813065,
+      "latency_seconds_max": 0.39979029999813065,
+      "raw_latencies_seconds": [
+        0.3998,
+        0.0779,
+        0.0822,
+        0.0816,
+        0.0771,
+        0.0752,
+        0.0776
+      ],
+      "unexpected_exception_types": []
+    }
+  ],
+  "live_generation_results": [],
+  "live_generation_skip_reasons": [
+    "no funded ANTHROPIC_API_KEY/OPENAI_API_KEY/HF_TOKEN present -- live generation benchmark not attempted"
+  ],
+  "pricing_informational_only": [
+    {
+      "provider": "anthropic",
+      "model": "claude-haiku-4-5-20251001",
+      "input_usd_per_million_tokens": 1.0,
+      "output_usd_per_million_tokens": 5.0,
+      "source_url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "read_on": "2026-07-20",
+      "note": "",
+      "input_usd_per_1k_tokens": 0.001,
+      "output_usd_per_1k_tokens": 0.005
+    },
+    {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5",
+      "input_usd_per_million_tokens": 2.0,
+      "output_usd_per_million_tokens": 10.0,
+      "source_url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "read_on": "2026-07-20",
+      "note": "introductory pricing through 2026-08-31; $3.00/$15.00 standard pricing after",
+      "input_usd_per_1k_tokens": 0.002,
+      "output_usd_per_1k_tokens": 0.01
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-luna",
+      "input_usd_per_million_tokens": 1.0,
+      "output_usd_per_million_tokens": 6.0,
+      "source_url": "https://developers.openai.com/api/docs/pricing",
+      "read_on": "2026-07-20",
+      "note": "",
+      "input_usd_per_1k_tokens": 0.001,
+      "output_usd_per_1k_tokens": 0.006
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-terra",
+      "input_usd_per_million_tokens": 2.5,
+      "output_usd_per_million_tokens": 15.0,
+      "source_url": "https://developers.openai.com/api/docs/pricing",
+      "read_on": "2026-07-20",
+      "note": "",
+      "input_usd_per_1k_tokens": 0.0025,
+      "output_usd_per_1k_tokens": 0.015
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "input_usd_per_million_tokens": 5.0,
+      "output_usd_per_million_tokens": 30.0,
+      "source_url": "https://developers.openai.com/api/docs/pricing",
+      "read_on": "2026-07-20",
+      "note": "",
+      "input_usd_per_1k_tokens": 0.005,
+      "output_usd_per_1k_tokens": 0.03
+    }
+  ]
+}

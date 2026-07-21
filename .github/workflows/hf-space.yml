@@ -19,3 +19,39 @@ jobs:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         git push https://joshuasundance:$HF_TOKEN@huggingface.co/spaces/joshuasundance/govgis_nov2023-slim-faiss main
+
+    # Stage 6 (docs/modernization-plan.md) action: the step above only proves
+    # the push transport succeeded, not that the Space actually built and
+    # started -- confirmed live 2026-07-21 (Stage 5 staging) that a real
+    # BUILD_ERROR is otherwise invisible to this workflow. Poll the Space API
+    # for the same commit SHA just pushed and a RUNNING runtime stage; fail
+    # the job (not just log a warning) on a build/runtime error or timeout,
+    # so a broken production deploy is a red GitHub Actions run, not a
+    # silent no-op.
+    - name: Verify Space reaches RUNNING at the deployed SHA
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
+        set -euo pipefail
+        expected_sha="$(git rev-parse HEAD)"
+        deadline=$((SECONDS + 1200))
+        while [ "$SECONDS" -lt "$deadline" ]; do
+          response="$(curl -sf -H "Authorization: Bearer ${HF_TOKEN}" \
+            https://huggingface.co/api/spaces/joshuasundance/govgis_nov2023-slim-faiss)"
+          sha="$(echo "$response" | jq -r '.sha')"
+          stage="$(echo "$response" | jq -r '.runtime.stage')"
+          echo "sha=$sha stage=$stage (expected sha=$expected_sha)"
+          if [ "$sha" = "$expected_sha" ] && [ "$stage" = "RUNNING" ]; then
+            echo "Space is RUNNING at the deployed SHA."
+            exit 0
+          fi
+          case "$stage" in
+            BUILD_ERROR|RUNTIME_ERROR|CONFIG_ERROR)
+              echo "::error::Space entered $stage while deploying $expected_sha" >&2
+              exit 1
+              ;;
+          esac
+          sleep 20
+        done
+        echo "::error::Timed out waiting for Space to reach RUNNING at $expected_sha" >&2
+        exit 1

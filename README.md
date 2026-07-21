@@ -3,12 +3,14 @@ title: govgis_nov2023-slim-faiss
 emoji: 🌎
 colorFrom: green
 colorTo: blue
-sdk: streamlit
-sdk_version: 1.29.0
-python_version: 3.11
+sdk: gradio
+sdk_version: 6.20.0
+python_version: "3.14"
 app_file: app.py
 pinned: true
 license: mit
+hf_oauth: true
+hf_oauth_scopes: [inference-api]
 ---
 
 # govgis_nov2023-slim-faiss

@@ -789,7 +789,13 @@ Gate:
 
 - the provider/model comparison table exists in the repo and the chosen
   defaults are traceable to it — a functional-but-unbenchmarked default does
-  not satisfy this gate;
+  not satisfy this gate. **Amended 2026-07-20 (Josh's decision, recorded in
+  `docs/stage4/provider_comparison.md`)**: quality-score/latency benchmarking
+  is explicitly deferred, not blocking — no funded provider keys existed in
+  the implementing session, currency/reachability were verified for real
+  (including a live auth-rejection check against all three providers), and
+  spending against a real key plus deciding a quality-scoring rubric is
+  revisited post-launch rather than gating Stage 5/6;
 - `README.md`'s `hf_oauth`/`hf_oauth_scopes` front matter is present and
   correctly scoped, asserted by a test;
 - a forced-failure test (e.g. an invalid test key) asserts no substring of the

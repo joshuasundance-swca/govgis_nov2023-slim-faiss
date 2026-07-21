@@ -181,3 +181,11 @@ the scoring rubric was done in this session: no such key was available (see
 "Status summary" above, re-confirmed 2026-07-21), and spending against a
 real, funded key -- or unilaterally deciding a scoring methodology on the
 coordinator's behalf -- is out of this lane's authority either way.
+
+**Decision recorded 2026-07-20 (Josh):** explicitly deferred, not blocking.
+The chosen defaults (Anthropic `claude-haiku-4-5-20251001`/`claude-sonnet-5`,
+OpenAI `gpt-5.6-luna`/`gpt-5.6-terra`, HF `openai/gpt-oss-120b`) ship as
+currency/reachability-verified but quality-unbenchmarked, matching this
+document's own honest disclosure above rather than a fabricated number.
+Revisit with funded keys and a scoring-rubric decision post-launch, not as
+a blocker to Stage 5/6.

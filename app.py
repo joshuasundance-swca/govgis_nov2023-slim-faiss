@@ -240,19 +240,67 @@ _OPENAI_ANSWER_MAX_TOKENS = 512
 
 _retrieval_index: RetrievalIndex | None = None
 
+# Stage 5 resolution of the "where does the deployed Space source its
+# artifact from" question app.py's module docstring and the modernization
+# plan's "Startup and storage strategy" section left open: a dedicated,
+# versioned Hub dataset repo (the plan's own preferred option), fetched at
+# runtime via `hf_hub_download` -- the same proven pattern the legacy app.py
+# already used for its own artifact (`download_data_from_hub`), just now
+# fetching three small-to-large files instead of one pickle-like blob.
+# huggingface_hub's own download cache means this only pays the network cost
+# once per container lifetime, matching `_get_retrieval_index`'s lazy-cache
+# behavior below. Pinned to an exact commit for reproducibility, the same
+# discipline this whole project applies to every other Hub reference.
+ARTIFACT_HUB_REPO_ID = "joshuasundance/govgis_nov2023-slim-faiss-index"
+ARTIFACT_HUB_REVISION = "aa940bdb8894bec953dd404b52a10ac97a1d2947"
 
-def _artifact_dir() -> Path:
+
+def _artifact_dir() -> Path | None:
+    """Return the local artifact directory, or ``None`` if it should instead
+    be fetched from the Hub (see ``_hub_artifact_paths`` below).
+    """
     raw = os.environ.get(ARTIFACT_DIR_ENV_VAR)
-    return Path(raw).expanduser() if raw else _LOCAL_DEV_ARTIFACT_DIR
+    if raw:
+        return Path(raw).expanduser()
+    if (_LOCAL_DEV_ARTIFACT_DIR / MANIFEST_FILENAME).is_file():
+        return _LOCAL_DEV_ARTIFACT_DIR
+    return None
+
+
+def _hub_artifact_paths() -> RetrievalArtifactPaths:
+    """Fetch the three artifact files from the pinned Hub dataset repo,
+    relying on huggingface_hub's own cache so repeat calls in the same
+    container are free. This is the deployed-Space default -- see the
+    ``ARTIFACT_HUB_REPO_ID`` comment above.
+    """
+    from huggingface_hub import hf_hub_download
+
+    def _fetch(filename: str) -> Path:
+        return Path(
+            hf_hub_download(
+                repo_id=ARTIFACT_HUB_REPO_ID,
+                filename=filename,
+                repo_type="dataset",
+                revision=ARTIFACT_HUB_REVISION,
+            ),
+        )
+
+    return RetrievalArtifactPaths(
+        index_path=_fetch(_INDEX_FILENAME),
+        records_path=_fetch(_DOCUMENTS_FILENAME),
+        manifest_path=_fetch(MANIFEST_FILENAME),
+    )
 
 
 def _artifact_paths() -> RetrievalArtifactPaths:
     artifact_dir = _artifact_dir()
-    return RetrievalArtifactPaths(
-        index_path=artifact_dir / _INDEX_FILENAME,
-        records_path=artifact_dir / _DOCUMENTS_FILENAME,
-        manifest_path=artifact_dir / MANIFEST_FILENAME,
-    )
+    if artifact_dir is not None:
+        return RetrievalArtifactPaths(
+            index_path=artifact_dir / _INDEX_FILENAME,
+            records_path=artifact_dir / _DOCUMENTS_FILENAME,
+            manifest_path=artifact_dir / MANIFEST_FILENAME,
+        )
+    return _hub_artifact_paths()
 
 
 def _get_retrieval_index() -> RetrievalIndex:

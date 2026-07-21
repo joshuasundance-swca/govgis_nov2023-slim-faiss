@@ -45,11 +45,9 @@ _REAL_HTML_DESCRIPTION = (
     '<DIV STYLE="text-align:Left;"><DIV><DIV><P><SPAN>This annotation data '
     "set shows the right-of-way widths for public streets and alleys. This "
     "data is part of the official City of Lubbock base map and is "
-    'maintained at a scale of 1" = 100\'.</SPAN></P></DIV></DIV></DIV>'
+    "maintained at a scale of 1\" = 100'.</SPAN></P></DIV></DIV></DIV>"
 )
-_REAL_HTML_EXPECTED_SUBSTRING = (
-    "right-of-way widths for public streets and alleys"
-)
+_REAL_HTML_EXPECTED_SUBSTRING = "right-of-way widths for public streets and alleys"
 
 
 def _query_set_entry(entry_id: str) -> dict[str, object]:
@@ -193,8 +191,7 @@ def test_sanitize_text_field_neutralizes_query_set_html_injection_entry() -> Non
 
 def test_sanitize_answer_text_neutralizes_markdown_and_html() -> None:
     answer = (
-        "Here you go: [click here](javascript:alert(document.cookie)) "
-        "<script>alert(1)</script>"
+        "Here you go: [click here](javascript:alert(document.cookie)) <script>alert(1)</script>"
     )
 
     sanitized = sanitize_answer_text(answer)

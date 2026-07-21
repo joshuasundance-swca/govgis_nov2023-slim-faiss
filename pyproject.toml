@@ -8,7 +8,13 @@ requires-python = ">=3.14"
 dependencies = [
     "anthropic>=0.117.0",
     "faiss-cpu>=1.14.3",
-    "gradio>=6.20.0",
+    # `[oauth]` pulls in `itsdangerous`, required at runtime by Gradio's
+    # `gr.LoginButton`/HF-OAuth session middleware (`gradio.oauth.attach_oauth`)
+    # -- confirmed live 2026-07-20: without this extra, `gr.Blocks.__exit__`
+    # raises `ImportError` as soon as a `gr.LoginButton` is present in the
+    # Blocks tree, since Gradio always attaches OAuth support at app-creation
+    # time if any is used. Plain `gradio` alone does not include it.
+    "gradio[oauth]>=6.20.0",
     "httpx>=0.28.1",
     "huggingface-hub>=1.24.0",
     "openai>=2.46.0",

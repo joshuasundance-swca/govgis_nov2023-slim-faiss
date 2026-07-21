@@ -102,6 +102,17 @@ class SpaceBuildContractTests(unittest.TestCase):
         self.assertEqual("gradio", metadata.get("sdk"))
         self.assertEqual("6.20.0", metadata.get("sdk_version"))
 
+    def test_readme_front_matter_declares_hf_oauth_scoped_to_inference_api(self) -> None:
+        # Stage 4 (Hugging Face lane): this front-matter pair is the actual
+        # mechanism HF Spaces uses to enable OAuth, not anything configured
+        # in application code alone (confirmed against the `spaces-oauth`
+        # docs -- see docs/modernization-plan.md's Stage 4 actions). Scoped
+        # to `inference-api` only, per Confirmed decision 4 -- no broader
+        # scope is ever requested.
+        metadata = _space_metadata()
+        self.assertEqual("true", metadata.get("hf_oauth"))
+        self.assertEqual("[inference-api]", metadata.get("hf_oauth_scopes"))
+
     def test_requirements_txt_reflects_new_dependency_set(self) -> None:
         requirement_names = _requirement_names()
         expected_names = {_normalize_name(name) for name in EXPECTED_RUNTIME_DEPENDENCIES}

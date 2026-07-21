@@ -9,6 +9,8 @@ python_version: "3.14"
 app_file: app.py
 pinned: true
 license: mit
+hf_oauth: true
+hf_oauth_scopes: [inference-api]
 ---
 
 # govgis_nov2023-slim-faiss

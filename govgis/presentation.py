@@ -59,8 +59,24 @@ _DROPPED_CONTENT_TAGS: Final[frozenset[str]] = frozenset({"script", "style"})
 # docs/stage0/evidence/html_in_description_example.md: nested DIV/P/SPAN).
 _BLOCK_TAGS: Final[frozenset[str]] = frozenset(
     {
-        "div", "p", "br", "li", "ul", "ol", "tr", "td", "th", "table",
-        "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "hr",
+        "div",
+        "p",
+        "br",
+        "li",
+        "ul",
+        "ol",
+        "tr",
+        "td",
+        "th",
+        "table",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "blockquote",
+        "hr",
     },
 )
 

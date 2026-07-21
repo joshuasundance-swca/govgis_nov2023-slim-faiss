@@ -854,7 +854,7 @@ Rollback:
 
 - stop staging and keep production on `5b3caca`.
 
-#### Stage 5 results (in progress, started 2026-07-21)
+#### Stage 5 results (recorded 2026-07-21) — Gate passed
 
 Artifact hosting (an open question this stage's own scope left unresolved —
 see "Startup and storage strategy" option 6) is resolved: a dedicated public
@@ -905,9 +905,57 @@ dependency-confusion-safe default) resolved cleanly with no conflicts.
 updated to the corrected `uv export` invocation so this exact class of bug
 cannot silently recur.
 
-Cold-build measurement (2-3 independent builds, SHA verification, retrieval/
-provider smoke tests, `cpu-basic` fit) is still pending as of this entry —
-this section will be updated again once the Gate above actually passes.
+After the fix, three independent cold builds were measured (not just the
+best one), each triggered separately via the Space API
+(`restart_space(..., factory_reboot=True)` for the second and third, which
+rebuilds from scratch with no cache reuse):
+
+| # | Trigger | Duration (queued → RUNNING) | Result |
+|---|---|---|---|
+| 1 | `upload_folder` deploy of the fix commit | ~1m40s (22:29:50 BUILDING → 22:31:51 RUNNING) | success |
+| 2 | `restart_space(factory_reboot=True)` | ~3m34s (22:36:33 → 22:39:51) | success |
+| 3 | `restart_space(factory_reboot=True)` | ~3m33s (22:40:17 → 22:43:50) | success |
+
+All three reported the intended deployed commit SHA
+(`955bb647dde71241d878939f0328c8948dcb899b`) via `GET
+https://huggingface.co/api/spaces/joshuasundance/govgis_nov2023-slim-faiss-staging`
+→ `.sha`, and `runtime.hardware` == `runtime.requested_hardware` ==
+`cpu-basic` on every check — no automatic hardware upgrade, no
+`RUNTIME_ERROR`/OOM across any of the three, which is the observable
+evidence this stage's memory-fit gate item asks for (the Space API exposes
+no separate RAM-usage metric).
+
+Retrieval and provider smoke tests, run against the live deployed Space via
+`gradio_client`, both before and after the reboots:
+
+- **Retrieval**: 5 real queries from `docs/stage0/query_set.json` (flood,
+  zoning, wildfire, parcel, hydrant) each returned well-formed, on-topic
+  top-3 results containing the query's grounding keyword (5/5). None
+  reproduced the *exact specific* `expected_names` record Stage 0's oracle
+  happened to reference for a single query — expected and not a regression:
+  many jurisdictions publish near-duplicate layers (e.g. multiple counties'
+  own "FEMA Flood Zones" layer), and the authoritative retrieval-fidelity
+  check is Stage 2's own Recall@3/Jaccard parity procedure against the real
+  legacy index (already passed — see the dataset card in
+  `joshuasundance/govgis_nov2023-slim-faiss-index`, 16/17 exact top-3 match,
+  mean Jaccard 0.9706), not a single-query name-substring check invented for
+  this smoke test. Cold-start-to-first-result was ~62-66s (lazy
+  model+index load on first query, matching `_get_retrieval_index`'s
+  designed cache-once behavior); subsequent queries in the same container
+  were ~1.3-1.5s.
+- **Providers**: `/_handle_generate_hf_answer` with no OAuth token returned
+  the correct sign-in-required message (no crash); a full real-search →
+  invalid-API-key chain against `/_handle_generate_anthropic_answer`
+  returned the generic, sanitized BYOK error message with no key or raw SDK
+  error leaked — confirming Stage 4's error-handling contract holds on the
+  real deployment, not just locally/CI. No real provider spend was made
+  (deliberately — BYOK keys are the user's own, and the quality-benchmark
+  gate item is separately deferred per Josh's decision).
+
+**Gate: passed.** All local/CI gates green at deploy time; SHA verified 3/3
+via the Space API; 3 independent cold builds recorded (not just the best);
+retrieval/provider smoke tests pass; `cpu-basic` fit confirmed by 3
+consecutive successful runs with no hardware escalation or runtime error.
 
 ### Stage 6: production rollout
 

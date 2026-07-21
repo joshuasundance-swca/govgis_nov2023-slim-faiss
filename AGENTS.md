@@ -46,10 +46,13 @@ Three GitHub Actions workflows, none of which run tests/lint/type-checks:
   size limit (for HF Space LFS sync).
 - `.github/workflows/bumpver.yml` — manual version bump + tag + push.
 
-`main` currently has **no branch protection** — none of the above are configured as required status
-checks, so nothing actually blocks a merge or a direct push today. `docs/modernization-plan.md`
-Stage 1 now owns closing this (add branch protection with the new CI gate as a required check,
-sequenced after that gate exists) — treat it as planned, not yet done, until Stage 1 actually lands.
+`main` now has branch protection (applied 2026-07-20, once `docs/modernization-plan`'s new CI gate
+went green): `check-file-sizes`, `test`, `lint`, `typecheck`, `pre-commit`, `gr-html-safety`,
+`requirements-drift` are all required status checks, `strict: true`, `enforce_admins: false`
+(deliberately, so `bumpver.yml`'s existing direct-push-to-`main` path keeps working — see
+`docs/modernization-plan.md`'s Stage 1 for the full rationale). This repo's own `main` still runs the
+pre-modernization `app.py`/`requirements.txt` until the modernization branch is actually merged
+(Stage 6) — branch protection only gates future merges, it doesn't change what's currently deployed.
 
 ## Non-negotiables (from `docs/modernization-plan.md` — do not weaken without recording a new decision there)
 

@@ -675,6 +675,20 @@ Actions:
   pass" gate actually attaches to. Sequence this after the CI gate lands; a
   check cannot be required before it exists.
 
+  **Applied 2026-07-20.** Confirmed active via `branches/main/protection`
+  (no longer 404). Required status checks: `check-file-sizes` (the
+  pre-existing file-size-limit workflow, now actually enforced for the first
+  time), `test`, `lint`, `typecheck`, `pre-commit`, `gr-html-safety`,
+  `requirements-drift` (the six new `ci.yml` jobs). `strict: true` (PR
+  branches must be up to date with `main` before merging).
+  **`enforce_admins: false`** — deliberately NOT strict-enforced on
+  administrators, so `bumpver.yml`'s existing direct-push-to-`main` path
+  (manual `workflow_dispatch`, pushes via a repo-admin-scoped token) keeps
+  working unmodified rather than being blocked by a gate it was never
+  designed to pass through. This is the explicit "exempt it" branch of the
+  decision above, not "route through a PR" — revisit if `bumpver.yml` is
+  ever restructured to open a PR instead of pushing directly.
+
 Gate:
 
 - fresh locked install succeeds;

@@ -134,13 +134,9 @@ _OPENAI_MODELS: Final[tuple[str, ...]] = ("gpt-5.6-luna", "gpt-5.6-terra", "gpt-
 # `gr.Blocks` app as a side effect of import (see `app.py`'s
 # `demo = build_app()` module-level call), which this standalone,
 # no-UI benchmarking script has no reason to pay for.
-_QUERY_SET_PATH: Final[Path] = (
-    Path(__file__).resolve().parents[1] / "stage0" / "query_set.json"
-)
+_QUERY_SET_PATH: Final[Path] = Path(__file__).resolve().parents[1] / "stage0" / "query_set.json"
 _ARTIFACT_DIR_ENV_VAR: Final[str] = "GOVGIS_ARTIFACT_DIR"
-_LOCAL_DEV_ARTIFACT_DIR: Final[Path] = (
-    Path(__file__).resolve().parents[2] / "scratch" / "artifacts"
-)
+_LOCAL_DEV_ARTIFACT_DIR: Final[Path] = Path(__file__).resolve().parents[2] / "scratch" / "artifacts"
 _INDEX_FILENAME: Final[str] = "index.faiss"
 _DOCUMENTS_FILENAME: Final[str] = "documents.jsonl"
 

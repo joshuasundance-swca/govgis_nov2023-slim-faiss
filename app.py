@@ -114,6 +114,22 @@ _NOT_SIGNED_IN_MESSAGE = (
     "Hugging Face above to optionally generate an AI answer from the "
     "retrieved results, using your own Hugging Face account."
 )
+# Gradio only ever performs *real* HF OAuth when actually running inside a
+# deployed Space (`gr.utils.get_space() is not None`, i.e. `SYSTEM=spaces`).
+# Outside a Space it falls back to a *local-debug* OAuth mock that requires
+# the machine itself to be logged in to Hugging Face
+# (`huggingface_hub.get_token()` + a real `whoami()` network call) --
+# unconditionally including `gr.LoginButton()` therefore made plain
+# `import app` (e.g. any pytest collection, or a contributor's own machine)
+# crash whenever that machine has no cached HF login, which CI correctly has
+# none of. Gating this section on `get_space()` fixes that AND is more
+# honest: HF sign-in genuinely does not work for real users outside a
+# deployed Space either, so there is nothing worth showing there.
+_HF_OAUTH_UNAVAILABLE_LOCALLY_MESSAGE = (
+    "_Hugging Face sign-in is only available when this app is deployed as a "
+    "Hugging Face Space._ Retrieval and the Anthropic/OpenAI BYOK answer "
+    "options below still work."
+)
 _HF_ANSWER_SECTION_TITLE = "Optional: AI-generated answer (Hugging Face open models)"
 _HF_SIGN_IN_REQUIRED_MESSAGE = (
     "Sign in with Hugging Face above to generate an AI answer. Search results "
@@ -493,10 +509,15 @@ def build_app() -> gr.Blocks:
         # parameter that Gradio auto-injects from the session on page load
         # (see `_render_login_status` -- this parameter is deliberately
         # absent from `demo.load`'s `inputs=`, matching Gradio's own HF OAuth
-        # guide pattern for injected special parameters).
-        gr.LoginButton()
-        login_status_markdown = gr.Markdown(_NOT_SIGNED_IN_MESSAGE, sanitize_html=True)
-        demo.load(fn=_render_login_status, inputs=None, outputs=[login_status_markdown])
+        # guide pattern for injected special parameters). Only real inside a
+        # deployed Space -- see `_HF_OAUTH_UNAVAILABLE_LOCALLY_MESSAGE`.
+        running_in_space = gr.utils.get_space() is not None
+        if running_in_space:
+            gr.LoginButton()
+            login_status_markdown = gr.Markdown(_NOT_SIGNED_IN_MESSAGE, sanitize_html=True)
+            demo.load(fn=_render_login_status, inputs=None, outputs=[login_status_markdown])
+        else:
+            gr.Markdown(_HF_OAUTH_UNAVAILABLE_LOCALLY_MESSAGE, sanitize_html=True)
 
         with gr.Row():
             query_box = gr.Textbox(
@@ -561,34 +582,39 @@ def build_app() -> gr.Blocks:
             outputs=[query_box],
         )
 
-        with gr.Accordion(_HF_ANSWER_SECTION_TITLE, open=False):
-            gr.Markdown(
-                "Generates an answer to your last search's query, grounded in "
-                "the retrieved results above, using an open model you choose "
-                "below via your own signed-in Hugging Face account. Optional "
-                "and off unless you sign in and click Generate -- retrieval "
-                "above always works without it.",
-                sanitize_html=True,
-            )
-            hf_model_dropdown = gr.Dropdown(
-                choices=list(CURATED_MODELS),
-                value=DEFAULT_MODEL,
-                label="Hugging Face model",
-            )
-            hf_generate_button = gr.Button("Generate answer")
-            # Never gr.HTML: `sanitize_answer_text` output only, or one of
-            # this module's own static message constants -- see module
-            # docstring's MID-RUN SPEC AMENDMENT note.
-            hf_answer_markdown = gr.Markdown(sanitize_html=True)
-            # Per-session concurrency guard (Stage 4 shared contract) -- see
-            # `_handle_generate_hf_answer`'s docstring comment.
-            hf_in_flight_state = gr.State(False)
+        # Only meaningful inside a deployed Space -- `oauth_token` below is a
+        # Gradio-injected special parameter that is only ever populated when
+        # the app "expects_oauth" via a real (not gated-out) `gr.LoginButton`
+        # above, which itself is only added `if running_in_space`.
+        if running_in_space:
+            with gr.Accordion(_HF_ANSWER_SECTION_TITLE, open=False):
+                gr.Markdown(
+                    "Generates an answer to your last search's query, grounded in "
+                    "the retrieved results above, using an open model you choose "
+                    "below via your own signed-in Hugging Face account. Optional "
+                    "and off unless you sign in and click Generate -- retrieval "
+                    "above always works without it.",
+                    sanitize_html=True,
+                )
+                hf_model_dropdown = gr.Dropdown(
+                    choices=list(CURATED_MODELS),
+                    value=DEFAULT_MODEL,
+                    label="Hugging Face model",
+                )
+                hf_generate_button = gr.Button("Generate answer")
+                # Never gr.HTML: `sanitize_answer_text` output only, or one of
+                # this module's own static message constants -- see module
+                # docstring's MID-RUN SPEC AMENDMENT note.
+                hf_answer_markdown = gr.Markdown(sanitize_html=True)
+                # Per-session concurrency guard (Stage 4 shared contract) -- see
+                # `_handle_generate_hf_answer`'s docstring comment.
+                hf_in_flight_state = gr.State(False)
 
-            hf_generate_button.click(
-                fn=_handle_generate_hf_answer,
-                inputs=[last_query_state, hf_model_dropdown, hf_in_flight_state],
-                outputs=[hf_answer_markdown, hf_in_flight_state],
-            )
+                hf_generate_button.click(
+                    fn=_handle_generate_hf_answer,
+                    inputs=[last_query_state, hf_model_dropdown, hf_in_flight_state],
+                    outputs=[hf_answer_markdown, hf_in_flight_state],
+                )
 
         # BYOK Anthropic/OpenAI answer synthesis (Confirmed decision 2). Each
         # API key textbox is `type="password"` and its value lives only in

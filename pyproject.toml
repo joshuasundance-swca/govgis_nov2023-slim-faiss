@@ -18,7 +18,19 @@ dependencies = [
     "httpx>=0.28.1",
     "huggingface-hub>=1.24.0",
     "openai>=2.46.0",
-    "pydantic>=2.13.4",
+    # Upper-bounded, not just floored -- confirmed live 2026-07-21 (staging
+    # Space BUILD_ERROR): the HF Gradio Space Dockerfile template
+    # unconditionally appends `gradio[oauth,mcp]==<pinned sdk_version>` to
+    # its `pip install -r requirements.txt ...` command line, regardless of
+    # which gradio extras this project itself declares. gradio 6.20.0's
+    # `mcp` extra (per its own PyPI metadata) caps `pydantic<=2.12.5`, which
+    # is unsatisfiable against a bare `pydantic>=2.13.4` floor -- pip/uv
+    # resolution fails at Space build time even though this project never
+    # requests the `mcp` extra itself. Bound to gradio 6.20.0's own declared
+    # `mcp`-extra range so the two stay mutually satisfiable; re-check this
+    # range against gradio's PyPI metadata (`requires_dist`) on any gradio
+    # version bump.
+    "pydantic>=2.11.10,<=2.12.5",
     "pyyaml>=6.0.3",
     "sentence-transformers>=5.6.0",
     "tenacity>=9.1.4",

@@ -90,6 +90,28 @@ pre-modernization `app.py`/`requirements.txt` until the modernization branch is 
   Space owner's own `huggingface_hub` token they return HTTP 200 as an SSE stream — see
   `docs/stage0/baseline_timings.md` for a real capture. The run-log endpoint only retains logs for
   the currently running instance (no historical-restart lookback).
+- **`requirements.txt` must be directly `pip install`-able exactly as HF's Gradio Space Dockerfile
+  invokes it** (confirmed live 2026-07-21, Stage 5's first staging `BUILD_ERROR` — full account in
+  `docs/modernization-plan.md`'s "Stage 5 results"): the Dockerfile runs
+  `pip install -r requirements.txt gradio[oauth,mcp]==<sdk_version> uvicorn>=0.14.0 websockets>=10.4
+  spaces` verbatim, with no other flags. This requires `uv export --locked --no-dev --no-hashes
+  --no-emit-project --emit-index-url --format requirements.txt -o requirements.txt` specifically —
+  not the plainer form — because: `-e .` (a bare `uv export`'s self-install line) can't carry a hash
+  and pip refuses it once any requirement has one (`--no-emit-project`; the `govgis` package doesn't
+  need installing — it's already on `sys.path` next to `app.py` when the Space runs); pip's
+  hash-checking mode is invocation-global, so it also breaks on HF's own unhashed appended packages
+  (`--no-hashes`); and plain pip has no knowledge of the `pytorch-cpu` index redirect in
+  `[tool.uv.sources]`, so `torch==...+cpu` is otherwise unresolvable (`--emit-index-url`). Relatedly,
+  `pyproject.toml`'s `pydantic` dependency is deliberately upper-bounded
+  (`>=2.11.10,<=2.12.5`) to stay inside gradio 6.20.0's own `mcp`-extra ceiling — re-check that bound
+  against gradio's PyPI `requires_dist` metadata on any gradio version bump, or the same class of
+  build failure recurs. CI's `requirements-drift` job only regenerates-and-diffs the file — it never
+  actually `pip install`s it — so this class of bug is invisible to CI and only surfaces at a real
+  Space build; when validating a `requirements.txt` change, simulate the exact command with
+  `uv pip install --dry-run --python-version 3.14 --python-platform linux --index-strategy
+  unsafe-best-match -r requirements.txt "gradio[oauth,mcp]==<sdk_version>" "uvicorn>=0.14.0"
+  "websockets>=10.4" spaces` (the `--index-strategy` flag matters: `uv pip`'s stricter
+  dependency-confusion-safe default rejects a resolution real `pip` accepts).
 
 ## Modernization plan status (2026-07-20)
 

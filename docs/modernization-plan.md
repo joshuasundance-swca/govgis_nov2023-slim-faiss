@@ -854,6 +854,61 @@ Rollback:
 
 - stop staging and keep production on `5b3caca`.
 
+#### Stage 5 results (in progress, started 2026-07-21)
+
+Artifact hosting (an open question this stage's own scope left unresolved —
+see "Startup and storage strategy" option 6) is resolved: a dedicated public
+HF dataset repo, `joshuasundance/govgis_nov2023-slim-faiss-index` @ pinned
+revision `aa940bdb8894bec953dd404b52a10ac97a1d2947` (checksums verified),
+fetched via `hf_hub_download` at runtime when no local artifact directory is
+present (`app.py`'s `_hub_artifact_paths()`). Verified end-to-end locally
+before deploying.
+
+Staging Space created (`joshuasundance/govgis_nov2023-slim-faiss-staging`,
+the ID recorded in Stage 0) and deployed. The **first cold build failed**
+(`BUILD_ERROR`), and diagnosing it surfaced three real, previously-unknown
+incompatibilities between this project's `uv`-generated `requirements.txt`
+and how the HF Gradio Space Dockerfile template actually invokes `pip` —
+none of which any local or CI gate exercised, because the CI
+`requirements-drift` job only regenerates-and-diffs the file, it never
+`pip install`s it (see AGENTS.md's Stage-5 gotcha entry for detail):
+
+1. `-e .` (the project's own editable self-install) cannot carry a hash, and
+   pip refuses it once *any* requirement in the same `pip install` invocation
+   has one — fixed with `--no-emit-project` (the `govgis` package doesn't
+   need installing anyway: it's a flat top-level directory next to `app.py`,
+   already on `sys.path` when the Space runs `python app.py` from `/app`).
+2. pip's hash-checking mode is global to the whole invocation, not just the
+   requirements file — HF's Dockerfile appends
+   `gradio[oauth,mcp]==<sdk_version> uvicorn>=0.14.0 websockets>=10.4 spaces`
+   on the same command line, unhashed and some unpinned, which fails once our
+   file's hashes activate that mode — fixed with `--no-hashes`.
+3. Plain `pip` has no knowledge of `[tool.uv.sources]`'s `pytorch-cpu` index
+   redirect, so `torch==...+cpu` (published only there, not default PyPI) is
+   otherwise unresolvable — fixed with `--emit-index-url`.
+4. Even with all three flags, resolution still failed: gradio 6.20.0's `mcp`
+   extra (confirmed against its own PyPI `requires_dist` metadata) caps
+   `pydantic<=2.12.5`, conflicting with this project's own
+   `pydantic>=2.13.4` floor — even though this project never requests the
+   `mcp` extra itself, HF's Dockerfile unconditionally does. Fixed by
+   re-bounding `pyproject.toml`'s pydantic dependency to
+   `>=2.11.10,<=2.12.5` (gradio 6.20.0's own declared `mcp`-extra range) and
+   re-locking.
+
+All four fixes verified before redeploying: local ruff/mypy/pytest/
+pre-commit all green against the new lock, and the exact HF-Dockerfile pip
+command reproduced via `uv pip install --dry-run --python-version 3.14
+--python-platform linux --index-strategy unsafe-best-match` (matching real
+`pip`'s default multi-index behavior, unlike `uv pip`'s stricter
+dependency-confusion-safe default) resolved cleanly with no conflicts.
+`.github/workflows/ci.yml`'s `requirements-drift` job and this document
+updated to the corrected `uv export` invocation so this exact class of bug
+cannot silently recur.
+
+Cold-build measurement (2-3 independent builds, SHA verification, retrieval/
+provider smoke tests, `cpu-basic` fit) is still pending as of this entry —
+this section will be updated again once the Gate above actually passes.
+
 ### Stage 6: production rollout
 
 Actions:

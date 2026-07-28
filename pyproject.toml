@@ -6,7 +6,7 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.14"
 dependencies = [
-    "anthropic>=0.117.0",
+    "anthropic>=0.120.0",
     "faiss-cpu>=1.14.3",
     # `[oauth]` pulls in `itsdangerous`, required at runtime by Gradio's
     # `gr.LoginButton`/HF-OAuth session middleware (`gradio.oauth.attach_oauth`)
@@ -16,8 +16,8 @@ dependencies = [
     # time if any is used. Plain `gradio` alone does not include it.
     "gradio[oauth]>=6.20.0",
     "httpx>=0.28.1",
-    "huggingface-hub>=1.24.0",
-    "openai>=2.46.0",
+    "huggingface-hub>=1.25.1",
+    "openai>=2.49.0",
     # Upper-bounded, not just floored -- confirmed live 2026-07-21 (staging
     # Space BUILD_ERROR): the HF Gradio Space Dockerfile template
     # unconditionally appends `gradio[oauth,mcp]==<pinned sdk_version>` to
@@ -30,9 +30,9 @@ dependencies = [
     # `mcp`-extra range so the two stay mutually satisfiable; re-check this
     # range against gradio's PyPI metadata (`requires_dist`) on any gradio
     # version bump.
-    "pydantic>=2.11.10,<=2.12.5",
+    "pydantic<=2.13.4,>=2.13.4",
     "pyyaml>=6.0.3",
-    "sentence-transformers>=5.6.0",
+    "sentence-transformers>=5.6.1",
     "tenacity>=9.1.4",
     # Declared directly (not just left as sentence-transformers' transitive
     # pull) so the [tool.uv.sources] CPU-only index redirect below actually
@@ -47,12 +47,12 @@ dev = [
     "bandit>=1.9.4",
     "mypy>=2.3.0",
     "playwright>=1.61.0",
-    "pre-commit>=4.6.0",
+    "pre-commit>=4.6.1",
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
     "pytest-playwright>=0.8.0",
-    "ruff>=0.15.22",
-    "types-pyyaml>=6.0.12.20260518",
+    "ruff>=0.16.0",
+    "types-pyyaml>=6.0.12.20260724",
 ]
 
 [build-system]
